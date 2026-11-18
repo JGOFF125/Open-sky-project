@@ -7,3 +7,5 @@ coverage/
 *.log
 .vercel/
 test-results/
+serviceAccount*.json
+*firebase-adminsdk*.json

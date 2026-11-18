@@ -20,6 +20,25 @@ npm run build
 npm run test:smoke
 ```
 
+## Team branches
+
+I'm keeping our shared starting point on `main`. Each member starts their own branch from the latest `main` and opens a pull request back to `main` when their checkpoint is ready.
+
+```bash
+git fetch origin
+git switch main
+git pull --ff-only origin main
+git switch -c your-name
+npm ci
+npm run dev
+```
+
+If a personal branch already exists, switch to it and merge `origin/main` instead of creating it again. Keep existing work committed before switching branches. Our feature ownership and response formats are in [docs/interfaces.md](docs/interfaces.md).
+
+The launch API works with labelled sample data without credentials, so everyone can start their pages now. Copy `.env.example` to `.env.local` for the shared browser authentication settings. The `NEXT_PUBLIC_FIREBASE_*` values identify the web app and are public configuration, not server credentials.
+
+Protected API routes and real database writes need server credentials supplied privately by the project owner. Keep private keys in `.env.local` or Vercel environment variables. Browser database access stays denied; feature pages call our Next.js API routes.
+
 ## Current foundation
 
 - Responsive home page and shared design system
@@ -34,17 +53,17 @@ Authentication screens, journal/saved-item CRUD, telescope data, and the map are
 
 ## Firebase and live data
 
-I'm keeping this project's Firebase configuration separate from our weekly assignments. Copy `.env.example` to `.env.local` and use the configuration from the OpenSky Firebase project. Confirm the database instance and edition before connecting the data layer; the foundation currently targets the default database through the Firebase Admin SDK.
+I'm using the OpenSky project `open-sky-e15ed`, separate from our weekly assignments. Its `(default)` database uses Standard edition, Firestore Native mode, in Montreal (`northamerica-northeast1`). Email/password authentication is enabled. The checked-in rules match the backend-only access policy published in Firebase.
 
 The server expects `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, and `FIREBASE_PRIVATE_KEY`. The private key accepts escaped newline characters. Server credentials must never use a `NEXT_PUBLIC_` prefix or be committed. The four `NEXT_PUBLIC_FIREBASE_*` values configure the browser authentication SDK.
 
-Set `OPENSKY_DATA_MODE=live` only after the database, IAM access, and security rules have been configured and verified. Live mode fails closed when server configuration is missing; it does not silently substitute sample missions. Configure Firestore rules to deny browser access to API-managed collections. Server ownership checks are still required because the Admin SDK bypasses rules.
+Set `OPENSKY_DATA_MODE=live` only after server credentials, IAM access, and a real launch-cache read/write have been verified. Live mode fails closed when server configuration is missing; it does not silently substitute sample missions. Server ownership checks are still required because the Admin SDK bypasses rules. The checked-in Firebase configuration manages Firestore only; the website stays on Vercel.
 
 The cache refreshes on demand, with at most four upstream attempts per rolling hour per shared database cache. There is no background scheduler. Lock expiry handles interrupted refreshes. The current feed holds up to 24 upcoming launches; search and details use that bounded dataset. A launch outside it returns 404. The cache's credentials, transactions, IAM access, and live upstream integration still need testing against the actual project.
 
 ## Deployment
 
-Import the repository in Vercel as a Next.js project. Use the `joaquin` branch for a preview deployment while the shared `main` branch is being established. Use the root directory, `npm run build`, and the default Next.js output. Add environment variables in Vercel; a demo build needs none. A Vercel connection or production deployment has not been created by this commit.
+The Vercel project is `web-dev-2026/opensky` and the repository connection has been set up. Use `main` for the shared deployment and individual branches for previews. Use the root directory, `npm run build`, and the default Next.js output. Add environment variables in Vercel; a demo build needs none. Production environment values and a live Firebase-backed launch request still need verification.
 
 ## Team and scope
 
