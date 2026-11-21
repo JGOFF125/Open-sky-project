@@ -1,10 +1,18 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ArrowUpRight, Orbit } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { ArrowUpRight, LogOut, Orbit } from "lucide-react";
+import { useAuth } from "@/components/auth-provider";
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, loading, logout } = useAuth();
+
+  async function handleLogout() {
+    await logout();
+    router.push("/");
+  }
   return (
     <header className="site-header shell">
       <Link className="brand" href="/" aria-label="OpenSky home">
@@ -33,9 +41,29 @@ export function SiteHeader() {
           </Link>
         ))}
       </nav>
-      <Link href="/saved" className="header-personal">
-        My sky <ArrowUpRight size={15} />
-      </Link>
+      {/* I show sign in or sign out depending on who is logged in */}
+      <div className="header-account">
+        {loading ? null : user ? (
+          <>
+            <Link href="/saved" className="header-personal">
+              My sky <ArrowUpRight size={15} />
+            </Link>
+            <button
+              type="button"
+              className="header-logout"
+              onClick={handleLogout}
+              aria-label="Sign out"
+              title={`Signed in as ${user.email}`}
+            >
+              <LogOut size={15} />
+            </button>
+          </>
+        ) : (
+          <Link href="/login" className="header-personal">
+            Sign in <ArrowUpRight size={15} />
+          </Link>
+        )}
+      </div>
     </header>
   );
 }
