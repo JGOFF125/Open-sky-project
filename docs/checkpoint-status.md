@@ -16,7 +16,7 @@ I'm keeping the November 20 catch-up work separate from the later team milestone
 
 I'm keeping the launch list, search, provider/status filters, mission details, countdowns, broadcast links, and Firestore cache. The upstream request now uses detailed mode because normal mode omits launch video links. Launch dates use the viewer's time zone when precise, and uncertain schedules remain labelled. Only a confirmed Go for Launch status starts a countdown.
 
-The shared cache has a transaction lock and a four-attempt rolling-hour budget. I checked concurrent refreshes, fresh reuse, stale responses after HTTP 429, locked/budget-limited requests, and valid empty feeds against a local Standard Firestore emulator. A production live feed still requires private server credentials and a real read/write check on `open-sky-e15ed`.
+The shared cache has a transaction lock and a four-attempt rolling-hour budget. I checked concurrent refreshes, fresh reuse, stale responses after HTTP 429, locked/budget-limited requests, and valid empty feeds against a local Standard Firestore emulator. I wait fifteen minutes between upstream attempts, including failed requests, and retain the previous schedule if publishing a refreshed cache fails. A production live feed still requires private server credentials and a real read/write check on `open-sky-e15ed`.
 
 For the November 20 catch-up, the journal supports authenticated creation and listing with validation, server timestamps, persistence, and separate user collections. I clear old account data during identity changes and discard late saves from a previous account. Journal read-one, update, and delete are not included in this catch-up.
 
@@ -26,7 +26,7 @@ The five records in `data/telescopes.json` follow the shared access-type fields.
 
 I'm running `npm run lint`, `npm test`, `npm run build`, and `npm run test:smoke`. The emulator suite runs with `npm run test:emulators` and uses only the disposable `demo-opensky` project. It checks client-SDK registration/sign-in/sign-out, private journal persistence and account separation, invalid input, denied anonymous database access, and launch-cache transactions. Real provider data was also checked using the Launch Library 2 development endpoint to confirm the response shape and detailed-mode broadcast fields.
 
-The cloud browser could not reach this environment's localhost preview. HTTP and emulator checks do not replace a final visual or production account-flow review.
+The cloud browser could not reach localhost, but I checked the deployed branch preview directly: launch search, provider filtering, empty results, filter reset, mission navigation, ticking countdowns, and the journal sign-in link and disabled signed-out form. Production signed-in writes and the real live-data connection still need verification.
 
 ## Remaining work
 

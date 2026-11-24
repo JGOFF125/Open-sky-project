@@ -243,6 +243,8 @@ describe.skipIf(!local)("Firebase local emulator integration", () => {
     expect(failed.launches[0].id).toBe("previous");
     expect(failed.stale).toBe(true);
     expect((await ref.get()).data().attempts).toHaveLength(1);
+    await getLaunchFeed();
+    expect(upstream).toBe(1);
     await ref.set(
       { attempts: [now, now - 1000, now - 2000, now - 3000] },
       { merge: true },
@@ -269,5 +271,35 @@ describe.skipIf(!local)("Firebase local emulator integration", () => {
     expect(feed.launches).toEqual([]);
     expect(feed.unavailable).toBe(false);
     expect(feed.stale).toBe(false);
+  });
+  it("retains the old feed if a successful upstream refresh cannot be written to Firestore", async () => {
+    const db = adminDb();
+    const ref = db.collection("launchCache").doc("upcoming");
+    await ref.set({
+      launches: [{ id: "old", name: "Previous mission" }],
+      updatedAt: Date.now() - REFRESH_MS - 1,
+      attempts: [],
+      lockUntil: 0,
+    });
+    const nativeFetch = global.fetch;
+    vi.spyOn(global, "fetch").mockImplementation((input, init) =>
+      String(input).startsWith("https://ll.thespacedevs.com/")
+        ? Promise.resolve(
+            Response.json({ results: [{ id: "new", name: "New mission" }] }),
+          )
+        : nativeFetch(input, init),
+    );
+    const transaction = db.runTransaction.bind(db);
+    let calls = 0;
+    vi.spyOn(db, "runTransaction").mockImplementation((...args) =>
+      ++calls === 2
+        ? Promise.reject(new Error("Temporary write failure"))
+        : transaction(...args),
+    );
+    const result = await getLaunchFeed();
+    expect(result.launches[0].id).toBe("old");
+    expect(result.stale).toBe(true);
+    expect(result.unavailable).toBe(false);
+    expect((await ref.get()).data().lockUntil).toBe(0);
   });
 });

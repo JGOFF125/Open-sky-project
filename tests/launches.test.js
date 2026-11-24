@@ -108,6 +108,14 @@ describe("shared upstream request budget", () => {
       ),
     ).toBe("budget");
   });
+  it("waits fifteen minutes after a failed refresh instead of retrying on each visit", () => {
+    expect(refreshDecision({ attempts: [now - REFRESH_MS + 1] }, now)).toBe(
+      "backoff",
+    );
+    expect(refreshDecision({ attempts: [now - REFRESH_MS] }, now)).toBe(
+      "refresh",
+    );
+  });
   it("allows recovery after the lock and budget expire", () => {
     expect(
       refreshDecision(
