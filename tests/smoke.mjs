@@ -61,6 +61,8 @@ async function check(mode, port) {
       "/explore",
       "/journal",
       "/saved",
+      "/login",
+      "/register",
     ]) {
       const result = await fetch(root + path);
       assert.equal(result.status, 200, path);
@@ -70,6 +72,17 @@ async function check(mode, port) {
     assert.equal(detail.status, 200);
     assert.equal((await detail.json()).launch.id, "demo-orbital");
     assert.equal((await fetch(`${root}/api/launches/missing`)).status, 404);
+    assert.equal((await fetch(`${root}/api/journal`)).status, 401);
+    assert.equal(
+      (
+        await fetch(`${root}/api/journal`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: "{}",
+        })
+      ).status,
+      401,
+    );
     const missingPage = await fetch(`${root}/launches/missing`);
     const html = await missingPage.text();
     assert.ok(html.includes("This mission isn"));

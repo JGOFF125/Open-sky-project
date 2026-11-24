@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { normalizeLaunch, countdownState } from "../lib/launches/model";
+import { formatLaunchTime } from "../lib/launches/time";
 import {
   refreshDecision,
   REFRESH_MS,
@@ -48,6 +49,45 @@ describe("launch data boundaries", () => {
       countdownState({ ...launch, statusId: 1 }, Date.parse(launch.net) + 1000)
         .label,
     ).toBe("Awaiting a schedule update");
+  });
+  it("does not count down an unconfirmed date or a mission already in flight", () => {
+    for (const statusId of [2, 3, 4, 5, 6, 7, 8, 9, null])
+      expect(
+        countdownState(
+          {
+            net: "2030-01-01T00:00:00Z",
+            precise: true,
+            statusId,
+            status: "Unconfirmed",
+          },
+          0,
+        ).seconds,
+      ).toBeNull();
+  });
+  it("formats local times across a date boundary and preserves tentative month precision", () => {
+    expect(
+      formatLaunchTime(
+        { net: "2030-01-01T01:00:00Z", precise: true },
+        "America/Edmonton",
+      ),
+    ).toContain("Dec 31, 2029");
+    const tentative = formatLaunchTime({
+      net: "2030-01-01T00:00:00Z",
+      precise: false,
+      datePrecision: "Month",
+    });
+    expect(tentative).toBe("Jan 2030 · tentative");
+  });
+  it("ignores malformed video lists and invalid coordinates", () => {
+    const result = normalizeLaunch({
+      id: "test",
+      name: "Test",
+      vid_urls: "invalid",
+      pad: { latitude: 95, longitude: NaN },
+    });
+    expect(result.broadcast).toBeNull();
+    expect(result.latitude).toBeNull();
+    expect(result.longitude).toBeNull();
   });
 });
 describe("shared upstream request budget", () => {

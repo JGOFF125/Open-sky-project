@@ -1,5 +1,5 @@
-import { FeaturePreview } from "@/components/feature-preview";
+import { Journal } from "@/components/journal";
 export const metadata = { title: "Observing journal" };
-export default function Journal() {
-  return <FeaturePreview feature="journal" />;
+export default function JournalPage() {
+  return <Journal />;
 }

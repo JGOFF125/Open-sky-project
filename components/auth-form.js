@@ -9,6 +9,7 @@ import {
 } from "firebase/auth";
 import { ArrowRight } from "lucide-react";
 import { useAuth } from "@/components/auth-provider";
+import { safeNextPath } from "@/lib/auth-path";
 
 // I turn Firebase error codes into messages people can understand
 const friendlyErrors = {
@@ -23,13 +24,6 @@ const friendlyErrors = {
   "auth/network-request-failed":
     "We couldn't connect. Check your internet and try again.",
 };
-
-// I only allow redirects to pages inside OpenSky
-function safeNextPath(value) {
-  return value && value.startsWith("/") && !value.startsWith("//")
-    ? value
-    : "/saved";
-}
 
 export function AuthForm({ mode }) {
   const isRegister = mode === "register";
@@ -94,7 +88,9 @@ export function AuthForm({ mode }) {
     return (
       <div className="empty-state">
         <h2>Accounts aren&apos;t set up here yet.</h2>
-        <p>Copy .env.example to .env.local to turn on sign in.</p>
+        <p>
+          Account services are temporarily unavailable. Please try again later.
+        </p>
       </div>
     );
   }

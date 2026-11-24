@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { getLaunchFeed } from "@/lib/launches/service";
 import { Countdown } from "@/components/countdown";
 import { FeedNotice } from "@/components/feed-notice";
+import { LaunchTime } from "@/components/launch-time";
 export const dynamic = "force-dynamic";
 export default async function Mission({ params }) {
   const { id } = await params;
@@ -49,9 +50,7 @@ export default async function Mission({ params }) {
               ["Destination orbit", launch.orbit],
               [
                 "Scheduled date",
-                launch.net
-                  ? `${launch.net.slice(0, 10)}${launch.precise ? ` · ${launch.net.slice(11, 16)} UTC` : " · Time to be confirmed"}`
-                  : "To be confirmed",
+                <LaunchTime key="scheduled" launch={launch} />,
               ],
             ].map(([label, value]) => (
               <div key={label}>

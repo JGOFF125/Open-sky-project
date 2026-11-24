@@ -49,7 +49,9 @@ Protected API routes and real database writes need server credentials supplied p
 - Firestore-backed launch-cache implementation with a transaction lock, four-attempt rolling-hour budget, and stale response handling
 - Explicit upcoming-feature pages for the telescope explorer, saved items, and journal
 
-Authentication screens, journal/saved-item CRUD, telescope data, and the map are still assigned development work. The current preview does not claim these features are complete.
+I'm tracking this review in [docs/checkpoint-status.md](docs/checkpoint-status.md). Dialyn's registration/login/logout and Matthew's journal creation/listing are integrated on `joaquin`. Five normalized telescope source records are in `data/telescopes.json`. Saved-item CRUD, journal editing/deletion, and the telescope API/map remain later work.
+
+The November 24 launch code includes local-time display, confirmed-status countdowns, detailed-mode broadcast fields, and Firestore cache checks. Production live data still needs verified private Admin credentials.
 
 ## Firebase and live data
 
@@ -59,7 +61,17 @@ The server expects `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, and `FIREBASE
 
 Set `OPENSKY_DATA_MODE=live` only after server credentials, IAM access, and a real launch-cache read/write have been verified. Live mode fails closed when server configuration is missing; it does not silently substitute sample missions. Server ownership checks are still required because the Admin SDK bypasses rules. The checked-in Firebase configuration manages Firestore only; the website stays on Vercel.
 
-The cache refreshes on demand, with at most four upstream attempts per rolling hour per shared database cache. There is no background scheduler. Lock expiry handles interrupted refreshes. The current feed holds up to 24 upcoming launches; search and details use that bounded dataset. A launch outside it returns 404. The cache's credentials, transactions, IAM access, and live upstream integration still need testing against the actual project.
+The detailed upstream feed includes broadcast fields where available. The cache refreshes on demand, with at most four upstream attempts per rolling hour per shared database cache. There is no background scheduler. Lock expiry handles interrupted refreshes. The current feed holds up to 24 upcoming launches; search and details use that bounded dataset. A launch outside it returns 404. Cache transactions and failure cases pass local Firebase emulator tests. Credentials, IAM access, and a real live-cache write still need verification against the actual project.
+
+## Local integration checks
+
+```bash
+npm run test:emulators
+```
+
+I'm using disposable local Auth and Standard Firestore emulators under `demo-opensky`; this does not write to our real Firebase project. Java 21 or newer is needed. The first run downloads the Firebase CLI/emulator. The test suite checks registration/sign-in/sign-out, journal creation/listing, cross-account privacy, denied browser database access, and shared launch-cache transactions. The emulator setup is accepted only outside production, with a `demo-` project ID and loopback emulator hosts.
+
+The five source records are ready as data; the November 24 telescope API, cards, filters, and map still need implementation. Their coordinates are labelled approximate where applicable.
 
 ## Deployment
 
