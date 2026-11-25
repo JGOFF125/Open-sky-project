@@ -2163,3 +2163,22 @@ h1 em {
 .sky-atlas-note .feature-link {
   display: inline;
 }
+
+.space-mission-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 375px), 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.space-mission-grid .eyebrow {
+  margin-bottom: 6px;
+  color: var(--cyan);
+}
+.space-mission-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+}
+.space-mission-links .feature-link {
+  margin-top: 3px;
+}

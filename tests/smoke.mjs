@@ -77,6 +77,18 @@ async function check(mode, port) {
     const deepSpace = await (await fetch(root + "/explore/deep-space")).text();
     assert.ok(deepSpace.includes("Hubble eXtreme Deep Field"));
     assert.ok(deepSpace.includes("Galaxy night in Chile"));
+    assert.ok(deepSpace.includes('id="space-missions"'));
+    for (const source of [
+      "https://spacetelescopelive.org/",
+      "https://iki.cosmos.ru/en/research/missions/spektr-rg",
+      "https://zenodo.org/records/11191945",
+      "https://ep.bao.ac.cn/ep/",
+      "https://gcn.nasa.gov/circulars?query=%22Einstein+Probe%22",
+      "https://www.issdc.gov.in/astro.html",
+      "https://www.issdc.gov.in/AS1_Data_Download.html",
+    ]) {
+      assert.ok(deepSpace.includes('href="' + source + '"'), source);
+    }
     const telescopes = await fetch(`${root}/api/telescopes`);
     assert.equal(telescopes.status, 200);
     assert.equal((await telescopes.json()).telescopes.length, 7);

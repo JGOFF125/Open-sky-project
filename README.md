@@ -87,7 +87,7 @@ The explorer includes two new sources in Chile and Mexico. Cerro Tololo’s GONG
 
 ## Deep space viewer
 
-The Telescope Explorer links to `/explore/deep-space`, with released Hubble and Webb observations credited to their original sources, an interactive Aladin Lite sky atlas, the SkiesLIVE ground-telescope player, and a recorded AstroUDP galaxy observing session. The page also links to NASA’s current Hubble and Webb targets and providers that accept public observing requests. The atlas requires WebGL2. The archive has an image zoom option for other browsers. The sky atlas and videos load when a viewer opens them.
+The Telescope Explorer links to `/explore/deep-space`, with released Hubble and Webb observations credited to their original sources, an interactive Aladin Lite sky atlas, the SkiesLIVE ground-telescope player, and a recorded AstroUDP galaxy observing session. The page also links to NASA’s current Hubble and Webb targets, Russia’s Spektr-RG X-ray survey catalog, observing reports from China’s Einstein Probe, India’s AstroSat images and archives, and providers that accept public observing requests. The atlas requires WebGL2. The archive has an image zoom option for other browsers. The sky atlas and videos load when a viewer opens them.
 
 ## Deployment
 

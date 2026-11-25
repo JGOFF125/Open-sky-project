@@ -8,6 +8,60 @@ import {
 
 export const metadata = { title: "Deep space" };
 
+const missions = [
+  {
+    region: "NASA · ESA · CSA",
+    name: "Hubble and Webb",
+    description:
+      "See current and upcoming targets, instruments, and observation schedules in NASA’s Space Telescope Live.",
+    links: [
+      ["See NASA’s observing targets", "https://spacetelescopelive.org/"],
+    ],
+  },
+  {
+    region: "Russia",
+    name: "Spektr-RG · ART-XC",
+    description:
+      "Explore the Russian-led telescope’s all-sky survey of X-ray sources, including active galaxies.",
+    links: [
+      [
+        "Open the X-ray catalog",
+        "https://zenodo.org/records/11191945",
+      ],
+      [
+        "Read the IKI mission overview",
+        "https://iki.cosmos.ru/en/research/missions/spektr-rg",
+      ],
+    ],
+  },
+  {
+    region: "China",
+    name: "Einstein Probe",
+    description:
+      "Follow reports of short-lived X-ray events, such as stellar flares and bursts from distant galaxies.",
+    links: [
+      [
+        "Read reports on NASA GCN",
+        "https://gcn.nasa.gov/circulars?query=%22Einstein+Probe%22",
+      ],
+      ["Visit the CAS science center", "https://ep.bao.ac.cn/ep/"],
+    ],
+  },
+  {
+    region: "India",
+    name: "AstroSat",
+    description:
+      "See how ISRO observes star-forming regions and other objects in ultraviolet and X-ray light.",
+    links: [
+      ["See AstroSat images", "https://www.issdc.gov.in/astro.html"],
+      [
+        "Browse public data archives",
+        "https://www.issdc.gov.in/AS1_Data_Download.html",
+      ],
+    ],
+  },
+];
+
 function ProviderLink({ href, children }) {
   return (
     <a
@@ -43,6 +97,9 @@ export default function DeepSpacePage() {
         </a>
         <a className="button secondary" href="#watch">
           Telescope broadcasts
+        </a>
+        <a className="button secondary" href="#space-missions">
+          Follow space telescopes
         </a>
         <a className="button secondary" href="#request">
           Request an image
@@ -93,15 +150,29 @@ export default function DeepSpacePage() {
             </ProviderLink>
           </article>
         </div>
-        <div className="feature-card deep-space-status">
-          <h3>What are Webb and Hubble observing?</h3>
-          <p>
-            NASA’s Space Telescope Live shows current and upcoming targets,
-            instruments, and observation schedules.
-          </p>
-          <ProviderLink href="https://spacetelescopelive.org/">
-            See NASA’s observing targets
-          </ProviderLink>
+      </section>
+
+      <section
+        id="space-missions"
+        className="deep-space-section"
+        aria-labelledby="space-missions-title"
+      >
+        <h2 id="space-missions-title">Follow space telescopes</h2>
+        <div className="space-mission-grid">
+          {missions.map(({ region, name, description, links }) => (
+            <article key={name} className="feature-card">
+              <p className="eyebrow">{region}</p>
+              <h3>{name}</h3>
+              <p>{description}</p>
+              <div className="space-mission-links">
+                {links.map(([label, href]) => (
+                  <ProviderLink key={href} href={href}>
+                    {label}
+                  </ProviderLink>
+                ))}
+              </div>
+            </article>
+          ))}
         </div>
       </section>
 
