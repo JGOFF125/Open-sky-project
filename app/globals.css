@@ -1977,3 +1977,31 @@ h1 em {
 .telescope-card summary {
   cursor: pointer;
 }
+
+.telescope-view {
+  flex: 0 0 100%;
+  order: 1;
+  min-width: 0;
+}
+.telescope-view figure {
+  margin: 0;
+}
+.telescope-view img,
+.telescope-view iframe {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #05080d;
+}
+.telescope-view img {
+  height: auto;
+  max-width: 512px;
+}
+.telescope-view iframe {
+  aspect-ratio: 16 / 9;
+}
+.telescope-view figcaption {
+  margin-top: 8px;
+  font-size: 12px;
+}

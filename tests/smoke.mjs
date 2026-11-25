@@ -70,10 +70,11 @@ async function check(mode, port) {
     }
     const explorer = await (await fetch(`${root}/explore`)).text();
     assert.ok(explorer.includes("Observing and launch map"));
-    assert.ok(explorer.includes("MicroObservatory"));
+    assert.ok(explorer.includes("Cerro Tololo Solar Telescope"));
+    assert.ok(explorer.includes("UNAM Morelia Lunar Eclipse"));
     const telescopes = await fetch(`${root}/api/telescopes`);
     assert.equal(telescopes.status, 200);
-    assert.equal((await telescopes.json()).telescopes.length, 5);
+    assert.equal((await telescopes.json()).telescopes.length, 7);
     for (const path of ["/api/saved", "/api/saved/test", "/api/journal/test"]) {
       const response = await fetch(root + path);
       assert.equal(response.status, 401);

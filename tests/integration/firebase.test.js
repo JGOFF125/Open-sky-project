@@ -191,15 +191,15 @@ describe.skipIf(!local)("Firebase local emulator integration", () => {
     });
     expect((await POST(broken)).status).toBe(400);
   });
-  it("reads all five seeded records from Firestore and falls back if a record is incomplete", async () => {
+  it("reads all seven seeded records from Firestore and falls back if a record is incomplete", async () => {
     expect((await (await getTelescopes()).json()).source).toBe("bundled");
     const { stdout } = await promisify(execFile)(process.execPath, [
       "scripts/seed-telescopes.mjs",
     ]);
-    expect(stdout).toContain("Seeded 5 telescope source records");
+    expect(stdout).toContain("Seeded 7 telescope source records");
     const catalog = await (await getTelescopes()).json();
     expect(catalog.source).toBe("firestore");
-    expect(catalog.telescopes).toHaveLength(5);
+    expect(catalog.telescopes).toHaveLength(7);
     expect(
       catalog.telescopes.find(({ id }) => id === "space-telescope-live")
         .latitude,

@@ -28,6 +28,54 @@
     "verificationNotes": "The public upcoming-events page describes free online observing. The broader events listing includes free and paid options; only free online broadcasts are included here. No integration API or paid subscription is required for our directory link."
   },
   {
+    "id": "cerro-tololo-solar",
+    "name": "Cerro Tololo Solar Telescope",
+    "provider": "NSF National Solar Observatory · GONG",
+    "description": "See the latest full-disk image of the Sun captured in hydrogen-alpha light at Cerro Tololo.",
+    "providerUrl": "https://gong2.nso.edu/products/scaleView/view.php?configFile=configs/hAlpha_lr.cfg&productIndex=3",
+    "accessType": "telescope-images",
+    "cost": "free",
+    "registrationRequired": false,
+    "requirements": ["A web browser"],
+    "limitations": [
+      "The feed shows individual telescope exposures captured during daylight.",
+      "Night, weather, maintenance, and processing delays can leave an older image on display."
+    ],
+    "locationName": "Cerro Tololo, Coquimbo, Chile",
+    "latitude": -30.168,
+    "longitude": -70.8055,
+    "locationPrecision": "site-approximate",
+    "locationNotes": "Approximate location of the GONG telescope at Cerro Tololo.",
+    "isLiveVideo": false,
+    "verifiedAt": "2026-11-25",
+    "verificationUrl": "https://nso.edu/data/nisp-data/h-alpha/",
+    "verificationNotes": "The provider publishes timestamped H-alpha images. OpenSky uses the Cerro Tololo station's public latest-image feed and displays the image capture time."
+  },
+  {
+    "id": "unam-morelia-lunar-eclipse",
+    "name": "UNAM Morelia Lunar Eclipse",
+    "provider": "Instituto de Radioastronomía y Astrofísica, UNAM",
+    "description": "Watch telescope footage of the March 2025 total lunar eclipse with Spanish commentary from UNAM Morelia.",
+    "providerUrl": "https://www.youtube.com/watch?v=wg0mo3FAYuY",
+    "accessType": "telescope-replay",
+    "cost": "free",
+    "registrationRequired": false,
+    "requirements": ["A web browser with access to YouTube"],
+    "limitations": [
+      "Replay of the March 13, 2025 broadcast.",
+      "Future broadcasts depend on UNAM's published event schedule."
+    ],
+    "locationName": "Morelia, Michoacán, Mexico",
+    "latitude": 19.7,
+    "longitude": -101.19,
+    "locationPrecision": "town",
+    "locationNotes": "City marker for the UNAM Morelia broadcast.",
+    "isLiveVideo": false,
+    "verifiedAt": "2026-11-25",
+    "verificationUrl": "https://www.crya.unam.mx/web/en/news/archive/571-telescopes-planetarium-hands-on-activities-and-more-this-march-13-for-the-total-eclipse",
+    "verificationNotes": "UNAM's event announcement confirms views through a telescope. The recording remains publicly listed on IRyA UNAM's YouTube channel."
+  },
+  {
     "id": "microobservatory",
     "name": "MicroObservatory",
     "provider": "Center for Astrophysics Harvard and Smithsonian",

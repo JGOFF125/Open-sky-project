@@ -18,8 +18,8 @@ export default async function Explore() {
         Telescope <em>explorer.</em>
       </h1>
       <p className="lead">
-        Find public observing opportunities, from scheduled broadcasts to images
-        you can request.
+        Watch scheduled telescope broadcasts, see recent telescope images, and
+        find public observing opportunities.
       </p>
       <FeedNotice feed={feed} />
       <TelescopeExplorer

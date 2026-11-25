@@ -28,9 +28,11 @@ I'm reserving `/journal`, `GET/POST /api/journal`, and `GET/PATCH/DELETE /api/jo
 
 ## Adil
 
-I'm reserving `/explore`, `GET /api/telescopes`, and the map for telescope discovery. Source fields are `id`, `name`, `description`, `providerUrl`, `accessType`, `cost`, `registrationRequired`, `limitations`, `verifiedAt`, `latitude`, and `longitude`. Access types are `broadcast`, `image-request`, `course-access`, `webcam`, and `observation-info`.
+I'm reserving `/explore`, `GET /api/telescopes`, and the map for telescope discovery. Source fields are `id`, `name`, `description`, `providerUrl`, `accessType`, `cost`, `registrationRequired`, `limitations`, `verifiedAt`, `latitude`, and `longitude`. Access types are `broadcast`, `telescope-images`, `telescope-replay`, `image-request`, `course-access`, `webcam`, and `observation-info`.
 
 Ground coordinates can be null; space telescope resources must not receive fabricated Earth markers. The map takes markers shaped as `{ id, type, name, latitude, longitude, href }`. Joaquin supplies launch coordinates through the launch feed. Provider links use verified HTTPS URLs, and new-tab links include `rel="noreferrer"`. Seed records must come from checked official sources. The directory and map use the same telescope catalog.
+
+The public `GET /api/telescopes/solar` endpoint returns `{ capturedAt, imageUrl }` for Cerro Tololo’s most recent telescope exposure, with the actual capture time in UTC. It returns 503 if the public provider feed is unavailable or invalid.
 
 ## Response conventions
 

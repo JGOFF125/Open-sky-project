@@ -4,15 +4,22 @@ import { useEffect, useMemo, useState } from "react";
 import { ArrowUpRight, MapPin, Telescope } from "lucide-react";
 import { SaveButton } from "@/components/save-button";
 import { ObservingMap } from "@/components/observing-map";
+import { TelescopeView } from "@/components/telescope-view";
 import { resourceHref } from "@/lib/resources";
 
 const accessLabels = {
-  broadcast: "Scheduled broadcasts",
+  broadcast: "Scheduled telescope broadcasts",
+  "telescope-images": "Near-live telescope images",
+  "telescope-replay": "Telescope replays",
   "image-request": "Image requests",
   "course-access": "Course access",
   webcam: "Observatory cameras",
   "observation-info": "Observing schedules",
 };
+
+function locationRegion(source) {
+  return source.locationName.split(",").at(-1).trim();
+}
 
 function mapLocations(telescopes, launches) {
   const groups = new Map();
@@ -42,21 +49,32 @@ function mapLocations(telescopes, launches) {
 
 export function TelescopeExplorer({ telescopes, launches, launchLabel }) {
   const [access, setAccess] = useState("");
+  const [region, setRegion] = useState("");
   const [showLaunches, setShowLaunches] = useState(true);
 
   useEffect(() => {
     function revealSource() {
-      if (telescopes.some(({ id }) => window.location.hash === `#${id}`))
+      if (telescopes.some(({ id }) => window.location.hash === `#${id}`)) {
         setAccess("");
+        setRegion("");
+      }
     }
     window.addEventListener("hashchange", revealSource);
     return () => window.removeEventListener("hashchange", revealSource);
   }, [telescopes]);
 
+  const regions = useMemo(
+    () => [...new Set(telescopes.map(locationRegion))].sort(),
+    [telescopes],
+  );
   const visible = useMemo(
     () =>
-      telescopes.filter(({ accessType }) => !access || accessType === access),
-    [access, telescopes],
+      telescopes.filter(
+        (source) =>
+          (!access || source.accessType === access) &&
+          (!region || locationRegion(source) === region),
+      ),
+    [access, region, telescopes],
   );
   const locations = useMemo(
     () => mapLocations(visible, showLaunches ? launches : []),
@@ -79,6 +97,20 @@ export function TelescopeExplorer({ telescopes, launches, launchLabel }) {
             ))}
           </select>
         </label>
+        <label>
+          Location
+          <select
+            value={region}
+            onChange={(event) => setRegion(event.target.value)}
+          >
+            <option value="">All locations</option>
+            {regions.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </label>
         <label className="map-toggle">
           <input
             type="checkbox"
@@ -93,6 +125,21 @@ export function TelescopeExplorer({ telescopes, launches, launchLabel }) {
         {visible.length} observing{" "}
         {visible.length === 1 ? "resource" : "resources"}
       </p>
+      {visible.length === 0 && (
+        <div className="empty-state">
+          <p>No observing resources match these filters.</p>
+          <button
+            type="button"
+            className="button secondary"
+            onClick={() => {
+              setAccess("");
+              setRegion("");
+            }}
+          >
+            Clear filters
+          </button>
+        </div>
+      )}
       <div className="telescope-grid">
         {visible.map((source) => (
           <TelescopeCard key={source.id} source={source} />
@@ -103,6 +150,10 @@ export function TelescopeExplorer({ telescopes, launches, launchLabel }) {
 }
 
 function TelescopeCard({ source }) {
+  const hasViewer = [
+    "cerro-tololo-solar",
+    "unam-morelia-lunar-eclipse",
+  ].includes(source.id);
   return (
     <article className="telescope-card" id={source.id}>
       <span className="eyebrow">
@@ -125,13 +176,19 @@ function TelescopeCard({ source }) {
         </ul>
       </details>
       <div className="feature-actions">
+        {hasViewer && <TelescopeView sourceId={source.id} />}
         <a
-          className="button primary"
+          className={`button ${hasViewer ? "secondary" : "primary"}`}
           href={source.providerUrl}
           target="_blank"
           rel="noopener noreferrer"
         >
-          Open provider <ArrowUpRight size={16} aria-hidden="true" />
+          {source.accessType === "broadcast"
+            ? "Check broadcast schedule"
+            : source.accessType === "telescope-replay"
+              ? "Watch on YouTube"
+              : "Open provider"}{" "}
+          <ArrowUpRight size={16} aria-hidden="true" />
           <span className="sr-only"> (opens in a new tab)</span>
         </a>
         <SaveButton

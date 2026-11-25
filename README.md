@@ -47,11 +47,11 @@ Protected API routes and real database writes need server credentials supplied p
 - Launch list/detail JSON endpoints and health endpoint
 - Server-only Firebase Admin setup and a shared ID-token verification helper
 - Firestore-backed launch-cache implementation with a transaction lock, four-attempt rolling-hour budget, and stale response handling
-- Public telescope directory with five checked sources and an interactive Leaflet map of observatories and launch sites
+- Public telescope directory with seven checked sources and an interactive Leaflet map of observatories and launch sites
 - Private saved launches and telescope resources with editable notes
 - Private observing journal with create, edit, delete, and optional links to saved resources
 
-I'm tracking this review in [docs/checkpoint-status.md](docs/checkpoint-status.md). Dialyn's registration/login/logout and Matthew's journal creation/listing are integrated on `joaquin`. Five normalized telescope source records are in `data/telescopes.json`.
+I'm tracking this review in [docs/checkpoint-status.md](docs/checkpoint-status.md). Dialyn's registration/login/logout and Matthew's journal creation/listing are integrated on `joaquin`. Seven checked telescope source records are in `data/telescopes.json`.
 
 The November 24 launch code includes local-time display, confirmed-status countdowns, detailed-mode broadcast fields, and Firestore cache checks. Production live data still needs verified private Admin credentials.
 
@@ -75,13 +75,15 @@ I'm using disposable local Auth and Standard Firestore emulators under `demo-ope
 
 ## Telescope directory
 
-The public explorer and `GET /api/telescopes` work with the five bundled source records. After configuring private Admin credentials, seed those records into Firestore from the repository root.
+The public explorer and `GET /api/telescopes` work with the seven bundled source records. After configuring private Admin credentials, seed those records into Firestore from the repository root.
 
 ```bash
 node --env-file=.env.local scripts/seed-telescopes.mjs open-sky-e15ed
 ```
 
-The seed replaces the five matching records by ID. The explorer reads the Firestore collection when all five are valid and falls back to the checked file if the database is unavailable or incomplete. The API reports the active source. The map uses approximate ground coordinates where labelled and links remote viewing to the respective providers.
+The seed replaces the seven matching records by ID. The explorer reads the Firestore collection when all seven are valid and falls back to the checked file if the database is unavailable or incomplete. The API reports the active source. The map uses approximate ground coordinates where labelled and links remote viewing to the respective providers.
+
+The explorer includes two new sources in Chile and Mexico. Cerro Tololo’s GONG solar viewer uses the public latest-image feed via `GET /api/telescopes/solar`. It shows the capture time in UTC and refreshes once a minute while open in a visible tab. The image can be older after dark. The UNAM Morelia viewer plays the March 2025 lunar eclipse replay and links directly to the official YouTube video.
 
 ## Deployment
 
