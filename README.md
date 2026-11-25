@@ -85,6 +85,10 @@ The seed replaces the seven matching records by ID. The explorer reads the Fires
 
 The explorer includes two new sources in Chile and Mexico. Cerro Tololo’s GONG solar viewer uses the public latest-image feed via `GET /api/telescopes/solar`. It shows the capture time in UTC and refreshes once a minute while open in a visible tab. The image can be older after dark. If the Chile feed is unavailable, the viewer shows a separately labelled GONG network image from Helioviewer. The UNAM Morelia viewer plays the March 2025 lunar eclipse replay and links directly to the official YouTube video.
 
+## Deep space viewer
+
+The Telescope Explorer links to `/explore/deep-space`, with released Hubble and Webb observations credited to their original sources, an interactive Aladin Lite sky atlas, the SkiesLIVE ground-telescope player, and a recorded AstroUDP galaxy observing session. The page also links to NASA’s current Hubble and Webb targets and providers that accept public observing requests. The sky atlas and videos load when a viewer opens them.
+
 ## Deployment
 
 The Vercel project is `web-dev-2026/opensky` and the repository connection has been set up. Use `main` for the shared deployment and individual branches for previews. Use the root directory, `npm run build`, and the default Next.js output. Add environment variables in Vercel; a demo build needs none. Production environment values and a live Firebase-backed launch request still need verification.

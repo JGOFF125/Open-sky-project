@@ -59,6 +59,7 @@ async function check(mode, port) {
       "/launches",
       "/launches/demo-orbital",
       "/explore",
+      "/explore/deep-space",
       "/journal",
       "/saved",
       "/login",
@@ -72,6 +73,10 @@ async function check(mode, port) {
     assert.ok(explorer.includes("Observing and launch map"));
     assert.ok(explorer.includes("Cerro Tololo Solar Telescope"));
     assert.ok(explorer.includes("UNAM Morelia Lunar Eclipse"));
+    assert.ok(explorer.includes("/explore/deep-space"));
+    const deepSpace = await (await fetch(root + "/explore/deep-space")).text();
+    assert.ok(deepSpace.includes("Hubble eXtreme Deep Field"));
+    assert.ok(deepSpace.includes("Galaxy night in Chile"));
     const telescopes = await fetch(`${root}/api/telescopes`);
     assert.equal(telescopes.status, 200);
     assert.equal((await telescopes.json()).telescopes.length, 7);

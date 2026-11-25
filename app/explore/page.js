@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
 import { FeedNotice } from "@/components/feed-notice";
 import { TelescopeExplorer } from "@/components/telescope-explorer";
 import { getLaunchFeed } from "@/lib/launches/service";
@@ -21,6 +23,12 @@ export default async function Explore() {
         Watch scheduled telescope broadcasts, see recent telescope images, and
         find public observing opportunities.
       </p>
+      <Link
+        className="button primary deep-space-entry"
+        href="/explore/deep-space"
+      >
+        Explore deep space <ArrowUpRight size={16} aria-hidden="true" />
+      </Link>
       <FeedNotice feed={feed} />
       <TelescopeExplorer
         telescopes={telescopes}
