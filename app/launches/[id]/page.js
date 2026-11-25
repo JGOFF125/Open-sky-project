@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { getLaunchFeed } from "@/lib/launches/service";
 import { Countdown } from "@/components/countdown";
 import { FeedNotice } from "@/components/feed-notice";
+import { SaveButton } from "@/components/save-button";
 import { LaunchTime } from "@/components/launch-time";
 export const dynamic = "force-dynamic";
 export default async function Mission({ params }) {
@@ -85,9 +86,11 @@ export default async function Mission({ params }) {
                 : "Broadcast not announced"}
             </span>
           )}
-          <span className="save-preview">
-            Saving missions is coming in the next release.
-          </span>
+          <SaveButton
+            resourceType="launch"
+            resourceId={launch.id}
+            title={launch.name}
+          />
         </aside>
       </div>
     </section>

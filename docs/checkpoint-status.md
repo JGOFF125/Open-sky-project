@@ -38,6 +38,17 @@ The cloud browser could not reach localhost, but I checked the deployed branch p
 | Adil     | November 24 telescope API, Firestore directory seeding, explorer cards, filters, and initial map; later launch-site markers                                    |
 | Everyone | Integrated site by November 30, final testing/polish by December 6, demo/documents by December 9, submission target December 11, official deadline December 13 |
 
+## Integrated follow-up
+
+| Workstream | Original contribution                               | Work completed on `joaquin` in the follow-up                                                                                    |
+| ---------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Joaquin    | Launch tracker and shared server foundation         | Launch outage handling and the integration across launches, accounts, and the map                                               |
+| Dialyn     | Registration, login, logout, and account navigation | Saved-resource API and page, duplicate-safe bookmarks, editable notes, removal, and save controls on launch and telescope pages |
+| Matthew    | Journal create/list, validation, and initial UI     | Journal detail, edit, delete, and links to saved resources with two-account ownership tests                                     |
+| Adil       | Five source records shared outside GitHub           | Seed script, public API, searchable-by-access directory, provider links, and map of observatories and launch sites              |
+
+The real Firebase project still needs server credential verification, the telescope seed, and live launch and signed-in write checks on Vercel. The local test suite uses the disposable emulator project.
+
 ## Provider evidence
 
 - Virtual Telescope free online events: https://www.virtualtelescope.eu/upcoming-events/

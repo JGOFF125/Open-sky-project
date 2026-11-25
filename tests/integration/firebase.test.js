@@ -8,9 +8,15 @@ import {
   vi,
 } from "vitest";
 import { randomUUID } from "node:crypto";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 vi.mock("server-only", () => ({}));
 import { adminDb } from "../../lib/firebase/admin";
 import { GET, POST } from "../../app/api/journal/route";
+import * as journalItem from "../../app/api/journal/[id]/route";
+import * as saved from "../../app/api/saved/route";
+import * as savedItem from "../../app/api/saved/[id]/route";
+import { GET as getTelescopes } from "../../app/api/telescopes/route";
 import { getLaunchFeed } from "../../lib/launches/service";
 import { HOUR_MS, REFRESH_MS } from "../../lib/launches/cache-policy";
 import { initializeApp, deleteApp } from "firebase/app";
@@ -51,6 +57,17 @@ function request(token, body) {
       "Content-Type": "application/json",
     },
     ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+  });
+}
+
+function itemRequest(token, method, body) {
+  return new Request("http://localhost/api/resource/item", {
+    method,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: body === undefined ? undefined : JSON.stringify(body),
   });
 }
 
@@ -174,6 +191,186 @@ describe.skipIf(!local)("Firebase local emulator integration", () => {
     });
     expect((await POST(broken)).status).toBe(400);
   });
+  it("reads all five seeded records from Firestore and falls back if a record is incomplete", async () => {
+    expect((await (await getTelescopes()).json()).source).toBe("bundled");
+    const { stdout } = await promisify(execFile)(process.execPath, [
+      "scripts/seed-telescopes.mjs",
+    ]);
+    expect(stdout).toContain("Seeded 5 telescope source records");
+    const catalog = await (await getTelescopes()).json();
+    expect(catalog.source).toBe("firestore");
+    expect(catalog.telescopes).toHaveLength(5);
+    expect(
+      catalog.telescopes.find(({ id }) => id === "space-telescope-live")
+        .latitude,
+    ).toBeNull();
+    await adminDb()
+      .collection("telescopes")
+      .doc("microobservatory")
+      .update({ providerUrl: "data:invalid" });
+    expect((await (await getTelescopes()).json()).source).toBe("bundled");
+    await promisify(execFile)(process.execPath, [
+      "scripts/seed-telescopes.mjs",
+    ]);
+  });
+
+  it("saves telescope and launch bookmarks once, keeps private notes, and removes a bookmark", async () => {
+    vi.stubEnv("OPENSKY_DATA_MODE", "demo");
+    try {
+      expect((await saved.GET(request())).status).toBe(401);
+      const input = {
+        resourceType: "telescope",
+        resourceId: "microobservatory",
+        title: "Supplied title",
+      };
+      expect(
+        (
+          await saved.POST(
+            request(first.idToken, { ...input, resourceId: "missing" }),
+          )
+        ).status,
+      ).toBe(404);
+      expect(
+        (
+          await saved.POST(
+            request(first.idToken, { ...input, note: "x".repeat(1001) }),
+          )
+        ).status,
+      ).toBe(400);
+      const responses = await Promise.all(
+        Array.from({ length: 4 }, () =>
+          saved.POST(request(first.idToken, input)),
+        ),
+      );
+      expect(responses.map(({ status }) => status).sort()).toEqual([
+        200, 200, 200, 201,
+      ]);
+      const { item } = await responses[0].json();
+      expect(item.title).toBe("MicroObservatory");
+      expect(
+        (await (await saved.GET(request(first.idToken))).json()).items,
+      ).toHaveLength(1);
+
+      const context = { params: Promise.resolve({ id: item.id }) };
+      for (const [method, body] of [
+        ["GET"],
+        ["PATCH", { note: "Other account" }],
+        ["DELETE"],
+      ]) {
+        expect(
+          (
+            await savedItem[method](
+              itemRequest(second.idToken, method, body),
+              context,
+            )
+          ).status,
+        ).toBe(404);
+      }
+      expect(
+        (
+          await savedItem.PATCH(
+            itemRequest(first.idToken, "PATCH", { title: "Changed title" }),
+            context,
+          )
+        ).status,
+      ).toBe(400);
+      const edit = await savedItem.PATCH(
+        itemRequest(first.idToken, "PATCH", { note: "  Check visibility  " }),
+        context,
+      );
+      expect(edit.status).toBe(200);
+      expect((await edit.json()).item).toMatchObject({
+        note: "Check visibility",
+        createdAt: item.createdAt,
+      });
+      const launch = await saved.POST(
+        request(first.idToken, {
+          resourceType: "launch",
+          resourceId: "demo-orbital",
+        }),
+      );
+      expect(launch.status).toBe(201);
+      expect(
+        (await savedItem.DELETE(itemRequest(first.idToken, "DELETE"), context))
+          .status,
+      ).toBe(204);
+      expect(
+        (await savedItem.GET(itemRequest(first.idToken, "GET"), context))
+          .status,
+      ).toBe(404);
+      expect(
+        (await (await saved.GET(request(first.idToken))).json()).items[0]
+          .resourceType,
+      ).toBe("launch");
+      expect(
+        (await (await saved.GET(request(second.idToken))).json()).items,
+      ).toEqual([]);
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it("reads, updates, unlinks, and deletes a journal entry only for its owner", async () => {
+    const before = await POST(
+      request(first.idToken, {
+        title: "Observation",
+        observedAt: "2026-11-24",
+        notes: "Original notes",
+        eventRef: { resourceType: "telescope", resourceId: "microobservatory" },
+      }),
+    );
+    const { entry } = await before.json();
+    const context = { params: Promise.resolve({ id: entry.id }) };
+    for (const [method, body] of [
+      ["GET"],
+      ["PATCH", { title: "Other account" }],
+      ["DELETE"],
+    ]) {
+      expect(
+        (
+          await journalItem[method](
+            itemRequest(second.idToken, method, body),
+            context,
+          )
+        ).status,
+      ).toBe(404);
+    }
+    const read = await journalItem.GET(
+      itemRequest(first.idToken, "GET"),
+      context,
+    );
+    expect((await read.json()).entry.eventRef.resourceId).toBe(
+      "microobservatory",
+    );
+    const bad = await journalItem.PATCH(
+      itemRequest(first.idToken, "PATCH", { createdAt: "unchangeable" }),
+      context,
+    );
+    expect(bad.status).toBe(400);
+    const edit = await journalItem.PATCH(
+      itemRequest(first.idToken, "PATCH", {
+        notes: "  Edited  ",
+        eventRef: null,
+      }),
+      context,
+    );
+    expect(edit.status).toBe(200);
+    const updated = (await edit.json()).entry;
+    expect(updated).toMatchObject({
+      notes: "Edited",
+      createdAt: entry.createdAt,
+      observedAt: entry.observedAt,
+    });
+    expect(updated.eventRef).toBeUndefined();
+    expect(
+      (await journalItem.DELETE(itemRequest(first.idToken, "DELETE"), context))
+        .status,
+    ).toBe(204);
+    expect(
+      (await journalItem.GET(itemRequest(first.idToken, "GET"), context))
+        .status,
+    ).toBe(404);
+  });
   it("blocks browser-style unauthenticated Firestore reads and writes", async () => {
     const url =
       "http://127.0.0.1:8080/v1/projects/demo-opensky/databases/(default)/documents/telescopes/test";
@@ -209,6 +406,7 @@ describe.skipIf(!local)("Firebase local emulator integration", () => {
               net_precision: { id: 1, name: "Minute" },
               status: { id: 1, name: "Go for Launch" },
               vid_urls: [{ url: "https://example.org/broadcast" }],
+              pad: { latitude: "28.56", longitude: "-80.58" },
             },
           ],
         });
@@ -219,6 +417,10 @@ describe.skipIf(!local)("Firebase local emulator integration", () => {
     const feed = await getLaunchFeed();
     expect(upstream).toBe(1);
     expect(feed.launches[0].broadcast).toBe("https://example.org/broadcast");
+    expect(feed.launches[0]).toMatchObject({
+      latitude: 28.56,
+      longitude: -80.58,
+    });
     expect(feed.stale).toBe(false);
   });
   it("retains stale data on upstream failure, counts failed attempts, and respects the budget", async () => {

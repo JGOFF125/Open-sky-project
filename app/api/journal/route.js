@@ -1,3 +1,4 @@
+import { serializeEntry } from "@/lib/journal/store";
 import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { ApiError, apiError, requireUser } from "@/lib/auth";
 import { adminDb } from "@/lib/firebase/admin";
@@ -5,19 +6,6 @@ import { validateJournalEntry } from "@/lib/journal/model";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-function serializeEntry(snapshot) {
-  const data = snapshot.data();
-  return {
-    id: snapshot.id,
-    title: data.title,
-    observedAt: data.observedAt.toDate().toISOString(),
-    notes: data.notes,
-    ...(data.eventRef ? { eventRef: data.eventRef } : {}),
-    createdAt: data.createdAt.toDate().toISOString(),
-    updatedAt: data.updatedAt.toDate().toISOString(),
-  };
-}
 
 export async function GET(request) {
   try {

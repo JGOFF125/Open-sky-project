@@ -39,7 +39,7 @@ The launch API works with labelled sample data without credentials, so everyone 
 
 Protected API routes and real database writes need server credentials supplied privately by the project owner. Keep private keys in `.env.local` or Vercel environment variables. Browser database access stays denied; feature pages call our Next.js API routes.
 
-## Current foundation
+## Website features
 
 - Responsive home page and shared design system
 - Launch explorer with search and provider/status filters
@@ -47,9 +47,11 @@ Protected API routes and real database writes need server credentials supplied p
 - Launch list/detail JSON endpoints and health endpoint
 - Server-only Firebase Admin setup and a shared ID-token verification helper
 - Firestore-backed launch-cache implementation with a transaction lock, four-attempt rolling-hour budget, and stale response handling
-- Explicit upcoming-feature pages for the telescope explorer, saved items, and journal
+- Public telescope directory with five checked sources and an interactive Leaflet map of observatories and launch sites
+- Private saved launches and telescope resources with editable notes
+- Private observing journal with create, edit, delete, and optional links to saved resources
 
-I'm tracking this review in [docs/checkpoint-status.md](docs/checkpoint-status.md). Dialyn's registration/login/logout and Matthew's journal creation/listing are integrated on `joaquin`. Five normalized telescope source records are in `data/telescopes.json`. Saved-item CRUD, journal editing/deletion, and the telescope API/map remain later work.
+I'm tracking this review in [docs/checkpoint-status.md](docs/checkpoint-status.md). Dialyn's registration/login/logout and Matthew's journal creation/listing are integrated on `joaquin`. Five normalized telescope source records are in `data/telescopes.json`.
 
 The November 24 launch code includes local-time display, confirmed-status countdowns, detailed-mode broadcast fields, and Firestore cache checks. Production live data still needs verified private Admin credentials.
 
@@ -69,9 +71,17 @@ The detailed upstream feed includes broadcast fields where available. The cache 
 npm run test:emulators
 ```
 
-I'm using disposable local Auth and Standard Firestore emulators under `demo-opensky`; this does not write to our real Firebase project. Java 21 or newer is needed. The first run downloads the Firebase CLI/emulator. The test suite checks registration/sign-in/sign-out, journal creation/listing, cross-account privacy, denied browser database access, and shared launch-cache transactions. The emulator setup is accepted only outside production, with a `demo-` project ID and loopback emulator hosts.
+I'm using disposable local Auth and Standard Firestore emulators under `demo-opensky`; this does not write to our real Firebase project. Java 21 or newer is needed. The first run downloads the Firebase CLI/emulator. The test suite checks registration/sign-in/sign-out, saved-item and journal operations, duplicate prevention, account separation, telescope seeding, denied browser database access, and shared launch-cache transactions. The emulator setup is accepted only outside production, with a `demo-` project ID and loopback emulator hosts.
 
-The five source records are ready as data; the November 24 telescope API, cards, filters, and map still need implementation. Their coordinates are labelled approximate where applicable.
+## Telescope directory
+
+The public explorer and `GET /api/telescopes` work with the five bundled source records. After configuring private Admin credentials, seed those records into Firestore from the repository root.
+
+```bash
+node --env-file=.env.local scripts/seed-telescopes.mjs open-sky-e15ed
+```
+
+The seed replaces the five matching records by ID. The explorer reads the Firestore collection when all five are valid and falls back to the checked file if the database is unavailable or incomplete. The API reports the active source. The map uses approximate ground coordinates where labelled and links remote viewing to the respective providers.
 
 ## Deployment
 

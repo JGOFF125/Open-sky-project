@@ -1775,3 +1775,205 @@ h1 em {
     padding: 22px;
   }
 }
+
+.feature-grid,
+.telescope-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 315px), 1fr));
+  gap: 18px;
+  margin: 28px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.feature-card,
+.telescope-card {
+  min-width: 0;
+  padding: clamp(18px, 3vw, 28px);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  overflow-wrap: anywhere;
+}
+.telescope-card {
+  scroll-margin-top: 105px;
+}
+.telescope-card:target {
+  border-color: var(--cyan);
+}
+.feature-card h2,
+.telescope-card h2,
+.observing-map-section h2 {
+  margin: 10px 0 8px;
+  font-size: 22px;
+  font-weight: 400;
+}
+.feature-card p,
+.telescope-card p {
+  color: var(--muted);
+  line-height: 1.55;
+}
+.source-provider,
+.source-location-note,
+.source-verification {
+  font-size: 12px;
+}
+.telescope-card .source-location {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 18px 0 4px;
+  color: var(--cyan);
+  font-size: 13px;
+}
+.source-location svg {
+  flex-shrink: 0;
+}
+.telescope-card details {
+  margin-top: 18px;
+}
+.telescope-card details ul,
+.map-location-list ul {
+  list-style: disc;
+  margin: 8px 0 0;
+  padding-left: 20px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.source-verification,
+.feature-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.feature-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.feature-actions .feature-actions {
+  margin: 0;
+}
+.feature-actions .button {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.feature-form label,
+.telescope-controls label {
+  font-size: 13px;
+}
+.feature-form:not(.journal-form) label {
+  display: grid;
+  gap: 6px;
+  margin-top: 14px;
+  color: var(--ink);
+}
+.feature-form textarea,
+.feature-form select {
+  width: 100%;
+  padding: 9px;
+  border: 1px solid #29374b;
+  border-radius: 3px;
+  background: #0b1220;
+  color: var(--ink);
+}
+.feature-form textarea {
+  resize: vertical;
+}
+.button.danger,
+.feature-error {
+  color: var(--orange);
+}
+.button.danger {
+  border: 1px solid var(--orange);
+}
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.feature-error {
+  font-size: 13px;
+}
+.telescope-controls {
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.telescope-controls label {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.map-toggle input {
+  accent-color: var(--cyan);
+}
+.observing-map-section {
+  margin-top: 24px;
+}
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 0 0 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.map-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.observing-map {
+  isolation: isolate;
+  height: clamp(280px, 48vw, 500px);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #172535;
+}
+.observing-map .leaflet-popup-content-wrapper,
+.observing-map .leaflet-popup-tip {
+  background: var(--panel);
+  color: var(--ink);
+}
+.observing-map .leaflet-popup-content a,
+.map-location-list a {
+  color: var(--cyan);
+  text-decoration: underline;
+}
+.observing-map .leaflet-popup-content ul {
+  max-height: 180px;
+  overflow: auto;
+  margin-top: 6px;
+}
+.observing-pin {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #172535;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px #fff;
+  background: var(--cyan);
+}
+.observing-pin.launch {
+  background: var(--orange);
+}
+.map-status:empty {
+  display: none;
+}
+.map-status,
+.map-location-list {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+.map-location-list h3 {
+  margin-top: 8px;
+  color: var(--ink);
+}
+.map-location-list summary,
+.telescope-card summary {
+  cursor: pointer;
+}

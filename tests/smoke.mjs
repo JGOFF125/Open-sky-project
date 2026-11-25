@@ -68,6 +68,17 @@ async function check(mode, port) {
       assert.equal(result.status, 200, path);
       console.log(`PASS ${path}`);
     }
+    const explorer = await (await fetch(`${root}/explore`)).text();
+    assert.ok(explorer.includes("Observing and launch map"));
+    assert.ok(explorer.includes("MicroObservatory"));
+    const telescopes = await fetch(`${root}/api/telescopes`);
+    assert.equal(telescopes.status, 200);
+    assert.equal((await telescopes.json()).telescopes.length, 5);
+    for (const path of ["/api/saved", "/api/saved/test", "/api/journal/test"]) {
+      const response = await fetch(root + path);
+      assert.equal(response.status, 401);
+      assert.equal(response.headers.get("cache-control"), "no-store");
+    }
     const detail = await fetch(`${root}/api/launches/demo-orbital`);
     assert.equal(detail.status, 200);
     assert.equal((await detail.json()).launch.id, "demo-orbital");

@@ -17,7 +17,9 @@ export default async function Launches() {
         The missions taking us a little further. Find one to follow.
       </p>
       <FeedNotice feed={feed} />
-      <LaunchExplorer launches={feed.launches} demo={feed.mode === "demo"} />
+      {!feed.unavailable && (
+        <LaunchExplorer launches={feed.launches} demo={feed.mode === "demo"} />
+      )}
     </section>
   );
 }
