@@ -62,8 +62,8 @@ export default function DeepSpacePage() {
           <article className="feature-card">
             <h3>SkiesLIVE Observatory</h3>
             <p>
-              Missouri telescope views on clear nights. The provider shows a
-              replay between broadcasts.
+              Missouri telescope views on clear nights. The player shows the
+              observatory’s standby view between broadcasts.
             </p>
             <EmbeddedView
               title="SkiesLIVE telescope broadcast"

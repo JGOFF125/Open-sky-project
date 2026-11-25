@@ -57,6 +57,7 @@ export function DeepSpaceArchive() {
 
 function ArchiveImage({ entry }) {
   const [failed, setFailed] = useState(false);
+  const [zoomed, setZoomed] = useState(false);
   return (
     <figure className="archive-image">
       {failed ? (
@@ -65,14 +66,32 @@ function ArchiveImage({ entry }) {
           this viewer.
         </p>
       ) : (
-        <Image
-          src={entry.image}
-          alt={entry.alt}
-          width={entry.width}
-          height={entry.height}
-          unoptimized
-          onError={() => setFailed(true)}
-        />
+        <>
+          <div
+            className="archive-viewport"
+            data-zoomed={zoomed}
+            role={zoomed ? "region" : undefined}
+            aria-label={zoomed ? "Zoomed telescope image" : undefined}
+            tabIndex={zoomed ? 0 : undefined}
+          >
+            <Image
+              src={entry.image}
+              alt={entry.alt}
+              width={entry.width}
+              height={entry.height}
+              unoptimized
+              onError={() => setFailed(true)}
+            />
+          </div>
+          <button
+            type="button"
+            className="button secondary archive-zoom"
+            aria-pressed={zoomed}
+            onClick={() => setZoomed(!zoomed)}
+          >
+            {zoomed ? "Fit image" : "Zoom image"}
+          </button>
+        </>
       )}
       <figcaption>
         <strong>{entry.name}</strong>
@@ -116,6 +135,7 @@ export function DeepSkyAtlas() {
         openLabel="Load sky atlas"
         closeLabel="Close sky atlas"
         className="sky-atlas-frame"
+        requiresWebGL
       />
       <a
         className="feature-link"
@@ -135,9 +155,21 @@ export function EmbeddedView({
   openLabel,
   closeLabel,
   className = "deep-space-player",
+  requiresWebGL = false,
 }) {
-  const [open, setOpen] = useState(false);
+  const [view, setView] = useState("closed");
+  const open = view !== "closed";
   const panelId = useId();
+
+  function toggle() {
+    if (open) {
+      setView("closed");
+      return;
+    }
+    const supported =
+      !requiresWebGL || document.createElement("canvas").getContext("webgl2");
+    setView(supported ? "ready" : "unsupported");
+  }
 
   return (
     <>
@@ -146,12 +178,21 @@ export function EmbeddedView({
         className="button primary"
         aria-expanded={open}
         aria-controls={panelId}
-        onClick={() => setOpen(!open)}
+        onClick={toggle}
       >
         {open ? closeLabel : openLabel}
       </button>
       <div id={panelId} hidden={!open}>
-        {open && (
+        {view === "unsupported" && (
+          <p className="sky-atlas-note" role="status">
+            The atlas needs WebGL2.{" "}
+            <a className="feature-link" href="#archive">
+              View and zoom the telescope images
+            </a>{" "}
+            in the archive.
+          </p>
+        )}
+        {view === "ready" && (
           <iframe
             className={className}
             title={title}

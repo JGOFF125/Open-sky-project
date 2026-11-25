@@ -2144,3 +2144,22 @@ h1 em {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.archive-viewport[data-zoomed="true"] {
+  overflow: auto;
+  max-height: 530px;
+}
+.archive-viewport[data-zoomed="true"] img {
+  width: 200%;
+  max-width: none;
+  max-height: none;
+}
+.archive-zoom {
+  margin-top: 10px;
+}
+.sky-atlas-note {
+  margin-top: 12px;
+}
+.sky-atlas-note .feature-link {
+  display: inline;
+}
