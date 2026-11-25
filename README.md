@@ -39,7 +39,7 @@ The launch API works with labelled sample data without credentials, so everyone 
 
 Protected API routes and real database writes need server credentials supplied privately by the project owner. Keep private keys in `.env.local` or Vercel environment variables. Browser database access stays denied; feature pages call our Next.js API routes.
 
-## Current foundation
+## Website features
 
 - Responsive home page and shared design system
 - Launch explorer with search and provider/status filters
@@ -47,9 +47,13 @@ Protected API routes and real database writes need server credentials supplied p
 - Launch list/detail JSON endpoints and health endpoint
 - Server-only Firebase Admin setup and a shared ID-token verification helper
 - Firestore-backed launch-cache implementation with a transaction lock, four-attempt rolling-hour budget, and stale response handling
-- Explicit upcoming-feature pages for the telescope explorer, saved items, and journal
+- Public telescope directory with seven checked sources and an interactive Leaflet map of observatories and launch sites
+- Private saved launches and telescope resources with editable notes
+- Private observing journal with create, edit, delete, and optional links to saved resources
 
-Authentication screens, journal/saved-item CRUD, telescope data, and the map are still assigned development work. The current preview does not claim these features are complete.
+I'm tracking this review in [docs/checkpoint-status.md](docs/checkpoint-status.md). Dialyn's registration/login/logout and Matthew's journal creation/listing are integrated on `joaquin`. Seven checked telescope source records are in `data/telescopes.json`.
+
+The November 24 launch code includes local-time display, confirmed-status countdowns, detailed-mode broadcast fields, and Firestore cache checks. Production live data still needs verified private Admin credentials.
 
 ## Firebase and live data
 
@@ -59,7 +63,31 @@ The server expects `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, and `FIREBASE
 
 Set `OPENSKY_DATA_MODE=live` only after server credentials, IAM access, and a real launch-cache read/write have been verified. Live mode fails closed when server configuration is missing; it does not silently substitute sample missions. Server ownership checks are still required because the Admin SDK bypasses rules. The checked-in Firebase configuration manages Firestore only; the website stays on Vercel.
 
-The cache refreshes on demand, with at most four upstream attempts per rolling hour per shared database cache. There is no background scheduler. Lock expiry handles interrupted refreshes. The current feed holds up to 24 upcoming launches; search and details use that bounded dataset. A launch outside it returns 404. The cache's credentials, transactions, IAM access, and live upstream integration still need testing against the actual project.
+The detailed upstream feed includes broadcast fields where available. The cache refreshes on demand, with at most four upstream attempts per rolling hour per shared database cache. There is no background scheduler. Lock expiry handles interrupted refreshes. The current feed holds up to 24 upcoming launches; search and details use that bounded dataset. A launch outside it returns 404. Cache transactions and failure cases pass local Firebase emulator tests. Credentials, IAM access, and a real live-cache write still need verification against the actual project.
+
+## Local integration checks
+
+```bash
+npm run test:emulators
+```
+
+I'm using disposable local Auth and Standard Firestore emulators under `demo-opensky`; this does not write to our real Firebase project. Java 21 or newer is needed. The first run downloads the Firebase CLI/emulator. The test suite checks registration/sign-in/sign-out, saved-item and journal operations, duplicate prevention, account separation, telescope seeding, denied browser database access, and shared launch-cache transactions. The emulator setup is accepted only outside production, with a `demo-` project ID and loopback emulator hosts.
+
+## Telescope directory
+
+The public explorer and `GET /api/telescopes` work with the seven bundled source records. After configuring private Admin credentials, seed those records into Firestore from the repository root.
+
+```bash
+node --env-file=.env.local scripts/seed-telescopes.mjs open-sky-e15ed
+```
+
+The seed replaces the seven matching records by ID. The explorer reads the Firestore collection when all seven are valid and falls back to the checked file if the database is unavailable or incomplete. The API reports the active source. The map uses approximate ground coordinates where labelled and links remote viewing to the respective providers.
+
+The explorer includes two new sources in Chile and Mexico. Cerro Tololo’s GONG solar viewer uses the public latest-image feed via `GET /api/telescopes/solar`. It shows the capture time in UTC and refreshes once a minute while open in a visible tab. The image can be older after dark. If the Chile feed is unavailable, the viewer shows a separately labelled GONG network image from Helioviewer. The UNAM Morelia viewer plays the March 2025 lunar eclipse replay and links directly to the official YouTube video.
+
+## Deep space viewer
+
+The Telescope Explorer links to `/explore/deep-space`, with released Hubble and Webb observations credited to their original sources, an interactive Aladin Lite sky atlas, the SkiesLIVE ground-telescope player, and a recorded AstroUDP galaxy observing session. The page also links to NASA’s current Hubble and Webb targets, Russia’s Spektr-RG X-ray survey catalog, observing reports from China’s Einstein Probe, India’s AstroSat images and archives, and providers that accept public observing requests. The atlas requires WebGL2. The archive has an image zoom option for other browsers. The sky atlas and videos load when a viewer opens them.
 
 ## Deployment
 

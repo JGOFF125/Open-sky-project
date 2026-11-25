@@ -1,0 +1,185 @@
+[
+  {
+    "id": "virtual-telescope-project",
+    "name": "Virtual Telescope Project",
+    "provider": "Virtual Telescope Project, Italy",
+    "description": "Scheduled public online observing sessions with commentary from astronomers.",
+    "providerUrl": "https://www.virtualtelescope.eu/upcoming-events/",
+    "accessType": "broadcast",
+    "cost": "free",
+    "registrationRequired": false,
+    "requirements": [
+      "A web browser",
+      "Choose an event explicitly marked free on the provider schedule"
+    ],
+    "limitations": [
+      "Scheduled sessions, not an on-demand telescope feed",
+      "Weather and provider schedules can change",
+      "Paid private services and paid onsite events are not part of this resource"
+    ],
+    "locationName": "Ceccano, Lazio, Italy",
+    "latitude": 41.567,
+    "longitude": 13.333,
+    "locationPrecision": "town",
+    "locationNotes": "Approximate town marker from the original source research; the provider also operates at Manciano. This is not an exact telescope position.",
+    "isLiveVideo": true,
+    "verifiedAt": "2026-11-24",
+    "verificationUrl": "https://www.virtualtelescope.eu/upcoming-events/",
+    "verificationNotes": "The public upcoming-events page describes free online observing. The broader events listing includes free and paid options; only free online broadcasts are included here. No integration API or paid subscription is required for our directory link."
+  },
+  {
+    "id": "cerro-tololo-solar",
+    "name": "Cerro Tololo Solar Telescope",
+    "provider": "NSF National Solar Observatory · GONG",
+    "description": "See the latest full-disk image of the Sun captured in hydrogen-alpha light at Cerro Tololo.",
+    "providerUrl": "https://gong2.nso.edu/products/scaleView/view.php?configFile=configs/hAlpha_lr.cfg&productIndex=3",
+    "accessType": "telescope-images",
+    "cost": "free",
+    "registrationRequired": false,
+    "requirements": ["A web browser"],
+    "limitations": [
+      "The feed shows individual telescope exposures captured during daylight.",
+      "Night, weather, maintenance, and processing delays can leave an older image on display."
+    ],
+    "locationName": "Cerro Tololo, Coquimbo, Chile",
+    "latitude": -30.168,
+    "longitude": -70.8055,
+    "locationPrecision": "site-approximate",
+    "locationNotes": "Approximate location of the GONG telescope at Cerro Tololo.",
+    "isLiveVideo": false,
+    "verifiedAt": "2026-11-25",
+    "verificationUrl": "https://nso.edu/data/nisp-data/h-alpha/",
+    "verificationNotes": "The provider publishes timestamped H-alpha images. OpenSky uses the Cerro Tololo station's public latest-image feed and displays the image capture time."
+  },
+  {
+    "id": "unam-morelia-lunar-eclipse",
+    "name": "UNAM Morelia Lunar Eclipse",
+    "provider": "Instituto de Radioastronomía y Astrofísica, UNAM",
+    "description": "Watch telescope footage of the March 2025 total lunar eclipse with Spanish commentary from UNAM Morelia.",
+    "providerUrl": "https://www.youtube.com/watch?v=wg0mo3FAYuY",
+    "accessType": "telescope-replay",
+    "cost": "free",
+    "registrationRequired": false,
+    "requirements": ["A web browser with access to YouTube"],
+    "limitations": [
+      "Replay of the March 13, 2025 broadcast.",
+      "Future broadcasts depend on UNAM's published event schedule."
+    ],
+    "locationName": "Morelia, Michoacán, Mexico",
+    "latitude": 19.7,
+    "longitude": -101.19,
+    "locationPrecision": "town",
+    "locationNotes": "City marker for the UNAM Morelia broadcast.",
+    "isLiveVideo": false,
+    "verifiedAt": "2026-11-25",
+    "verificationUrl": "https://www.crya.unam.mx/web/en/news/archive/571-telescopes-planetarium-hands-on-activities-and-more-this-march-13-for-the-total-eclipse",
+    "verificationNotes": "UNAM's event announcement confirms views through a telescope. The recording remains publicly listed on IRyA UNAM's YouTube channel."
+  },
+  {
+    "id": "microobservatory",
+    "name": "MicroObservatory",
+    "provider": "Center for Astrophysics Harvard and Smithsonian",
+    "description": "Request images from a network of real robotic telescopes through Observing With NASA.",
+    "providerUrl": "https://mo-www.cfa.harvard.edu/OWN/",
+    "accessType": "image-request",
+    "cost": "free",
+    "registrationRequired": false,
+    "requirements": [
+      "A web browser",
+      "An email address for image requests and delivery"
+    ],
+    "limitations": [
+      "Image requests are queued; this is not a live video feed",
+      "Delivery depends on observing conditions and the provider queue",
+      "The marker represents one network site, not every telescope"
+    ],
+    "locationName": "Fred Lawrence Whipple Observatory, Arizona, United States",
+    "latitude": 31.681,
+    "longitude": -110.878,
+    "locationPrecision": "site-approximate",
+    "locationNotes": "Representative network site from the original provider research; not an instrument-level position.",
+    "isLiveVideo": false,
+    "verifiedAt": "2026-11-24",
+    "verificationUrl": "https://mo-www.cfa.harvard.edu/OWN/about.html",
+    "verificationNotes": "The official OWN page provides robotic telescope access and links to image requests. The CfA public resources page describes these resources as open access and free. External image requests remain on the provider site."
+  },
+  {
+    "id": "openscience-observatories",
+    "name": "OpenScience Observatories",
+    "provider": "The Open University",
+    "description": "Remote COAST telescope observations through the free Astronomy with an online telescope course.",
+    "providerUrl": "https://telescope.org/",
+    "accessType": "course-access",
+    "cost": "free",
+    "registrationRequired": true,
+    "requirements": [
+      "A free OpenLearn account",
+      "Follow the course instructions to create a telescope account in week four",
+      "Personal noncommercial use"
+    ],
+    "limitations": [
+      "Course-based access rather than immediate control",
+      "Provider accounts are separate from OpenSky accounts",
+      "Observations depend on scheduling, weather, and system availability"
+    ],
+    "locationName": "Teide Observatory, Tenerife, Spain",
+    "latitude": 28.3,
+    "longitude": -16.5097,
+    "locationPrecision": "site-approximate",
+    "locationNotes": "Approximate Teide Observatory site coordinates from the original source research.",
+    "isLiveVideo": false,
+    "verifiedAt": "2026-11-24",
+    "verificationUrl": "https://telescope.org/",
+    "verificationNotes": "The official page confirms the free course, account instructions during week four, Tenerife facilities, and personal noncommercial terms. OpenSky does not book or control these telescopes."
+  },
+  {
+    "id": "subaru-telescope-live-cameras",
+    "name": "Subaru Observatory Cameras",
+    "provider": "National Astronomical Observatory of Japan",
+    "description": "Public camera views around the Subaru Telescope summit facilities on Maunakea.",
+    "providerUrl": "https://subarutelescope.org/en/about/instrument/live_stream/index.html",
+    "accessType": "webcam",
+    "cost": "free",
+    "registrationRequired": false,
+    "requirements": ["A web browser"],
+    "limitations": [
+      "Views of the observatory surroundings, not through the Subaru science telescope",
+      "The page describes images refreshed every few minutes",
+      "Some views are dark at night and camera availability may change"
+    ],
+    "locationName": "Subaru Telescope, Maunakea, Hawaii, United States",
+    "latitude": 19.8256,
+    "longitude": -155.4761,
+    "locationPrecision": "site-approximate",
+    "locationNotes": "Approximate summit site coordinates retained from the original provider research.",
+    "isLiveVideo": false,
+    "verifiedAt": "2026-11-24",
+    "verificationUrl": "https://subarutelescope.org/en/about/instrument/live_stream/index.html",
+    "verificationNotes": "The official public camera page shows directional summit views and explains the refresh interval and nighttime darkness. The direct camera page replaces a generic homepage link; no paid API is used."
+  },
+  {
+    "id": "space-telescope-live",
+    "name": "NASA Space Telescope Live",
+    "provider": "Space Telescope Science Institute for NASA",
+    "description": "Explore current, past, and upcoming Hubble and Webb observing information.",
+    "providerUrl": "https://spacetelescopelive.org/",
+    "accessType": "observation-info",
+    "cost": "free",
+    "registrationRequired": false,
+    "requirements": ["A web browser"],
+    "limitations": [
+      "Observation information rather than live telescope video",
+      "Schedules are not guaranteed live telemetry",
+      "Space-based telescopes have no Earth map marker"
+    ],
+    "locationName": "Space-based",
+    "latitude": null,
+    "longitude": null,
+    "locationPrecision": "not-applicable",
+    "locationNotes": "No ground coordinates are assigned to Hubble or Webb.",
+    "isLiveVideo": false,
+    "verifiedAt": "2026-11-24",
+    "verificationUrl": "https://science.nasa.gov/missions/webb/what-are-hubble-and-webb-observing-right-now-nasa-tool-has-the-answer/",
+    "verificationNotes": "NASA describes the public observing explorer and its Hubble and Webb schedule information. No subscription or integration API is needed for our provider link."
+  }
+]

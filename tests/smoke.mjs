@@ -59,17 +59,59 @@ async function check(mode, port) {
       "/launches",
       "/launches/demo-orbital",
       "/explore",
+      "/explore/deep-space",
       "/journal",
       "/saved",
+      "/login",
+      "/register",
     ]) {
       const result = await fetch(root + path);
       assert.equal(result.status, 200, path);
       console.log(`PASS ${path}`);
     }
+    const explorer = await (await fetch(`${root}/explore`)).text();
+    assert.ok(explorer.includes("Observing and launch map"));
+    assert.ok(explorer.includes("Cerro Tololo Solar Telescope"));
+    assert.ok(explorer.includes("UNAM Morelia Lunar Eclipse"));
+    assert.ok(explorer.includes("/explore/deep-space"));
+    const deepSpace = await (await fetch(root + "/explore/deep-space")).text();
+    assert.ok(deepSpace.includes("Hubble eXtreme Deep Field"));
+    assert.ok(deepSpace.includes("Galaxy night in Chile"));
+    assert.ok(deepSpace.includes('id="space-missions"'));
+    for (const source of [
+      "https://spacetelescopelive.org/",
+      "https://iki.cosmos.ru/en/research/missions/spektr-rg",
+      "https://zenodo.org/records/11191945",
+      "https://ep.bao.ac.cn/ep/",
+      "https://gcn.nasa.gov/circulars?query=%22Einstein+Probe%22",
+      "https://www.issdc.gov.in/astro.html",
+      "https://www.issdc.gov.in/AS1_Data_Download.html",
+    ]) {
+      assert.ok(deepSpace.includes('href="' + source + '"'), source);
+    }
+    const telescopes = await fetch(`${root}/api/telescopes`);
+    assert.equal(telescopes.status, 200);
+    assert.equal((await telescopes.json()).telescopes.length, 7);
+    for (const path of ["/api/saved", "/api/saved/test", "/api/journal/test"]) {
+      const response = await fetch(root + path);
+      assert.equal(response.status, 401);
+      assert.equal(response.headers.get("cache-control"), "no-store");
+    }
     const detail = await fetch(`${root}/api/launches/demo-orbital`);
     assert.equal(detail.status, 200);
     assert.equal((await detail.json()).launch.id, "demo-orbital");
     assert.equal((await fetch(`${root}/api/launches/missing`)).status, 404);
+    assert.equal((await fetch(`${root}/api/journal`)).status, 401);
+    assert.equal(
+      (
+        await fetch(`${root}/api/journal`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: "{}",
+        })
+      ).status,
+      401,
+    );
     const missingPage = await fetch(`${root}/launches/missing`);
     const html = await missingPage.text();
     assert.ok(html.includes("This mission isn"));

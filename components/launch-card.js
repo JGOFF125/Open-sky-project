@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, MapPin } from "lucide-react";
+import { LaunchTime } from "./launch-time";
 
 export function LaunchCard({ launch, index = 0, demo = false }) {
   return (
@@ -23,11 +24,7 @@ export function LaunchCard({ launch, index = 0, demo = false }) {
           {launch.location}
         </p>
         <div className="card-bottom">
-          <span>
-            {launch.net
-              ? `${launch.net.slice(0, 10)} · ${launch.precise ? `${launch.net.slice(11, 16)} UTC` : "Time TBD"}`
-              : "Date to be confirmed"}
-          </span>
+          <LaunchTime launch={launch} />
           <ArrowUpRight size={17} />
         </div>
       </div>

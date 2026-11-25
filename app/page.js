@@ -8,6 +8,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { getLaunchFeed } from "@/lib/launches/service";
+import { featuredLaunch } from "@/lib/launches/model";
 import { Countdown } from "@/components/countdown";
 import { LaunchCard } from "@/components/launch-card";
 import { FeedNotice } from "@/components/feed-notice";
@@ -15,7 +16,7 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const feed = await getLaunchFeed();
-  const featured = feed.launches[0];
+  const featured = featuredLaunch(feed.launches);
   return (
     <>
       <section className="hero shell">
@@ -151,7 +152,6 @@ export default async function Home() {
         </div>
         <Link className="discovery-card" href="/explore">
           <Telescope size={30} strokeWidth={1} />
-          <span className="pill">Coming soon</span>
           <h3>A window to the night sky.</h3>
           <p>
             Discover observing opportunities and public telescope resources
@@ -163,7 +163,6 @@ export default async function Home() {
         </Link>
         <Link className="discovery-card" href="/journal">
           <NotebookPen size={30} strokeWidth={1} />
-          <span className="pill">Coming soon</span>
           <h3>Make the moment yours.</h3>
           <p>Turn a little curiosity into a personal record of discovery.</p>
           <span className="quiet-link">

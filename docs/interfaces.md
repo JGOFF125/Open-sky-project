@@ -14,7 +14,7 @@ Launch fields are defined in `lib/launches/model.js`: `id`, `name`, `provider`, 
 
 Protected requests send `Authorization: Bearer <Firebase ID token>`. `requireUser(request)` returns verified claims including `uid`; `apiError(error)` formats a safe error response. I'm using a verified UID to select a user's collection, never a UID supplied in a request body.
 
-API-managed collections are `users/{uid}/saved/{itemId}`, `users/{uid}/journal/{entryId}`, `telescopes/{sourceId}`, and `launchCache/upcoming`. The implementation must confirm the actual database edition before deployment. Browser Firestore access is not part of the feature API.
+API-managed collections are `users/{uid}/saved/{itemId}`, `users/{uid}/journal/{entryId}`, `telescopes/{sourceId}`, and `launchCache/upcoming`. The project uses Standard Firestore in Native mode. Browser Firestore access is not part of the feature API.
 
 ## Dialyn
 
@@ -28,9 +28,11 @@ I'm reserving `/journal`, `GET/POST /api/journal`, and `GET/PATCH/DELETE /api/jo
 
 ## Adil
 
-I'm reserving `/explore`, `GET /api/telescopes`, and the map for telescope discovery. Source fields are `id`, `name`, `description`, `providerUrl`, `accessType`, `cost`, `registrationRequired`, `limitations`, `verifiedAt`, `latitude`, and `longitude`. Access types are `broadcast`, `image-request`, `course-access`, `webcam`, and `observation-info`.
+I'm reserving `/explore`, `GET /api/telescopes`, and the map for telescope discovery. Source fields are `id`, `name`, `description`, `providerUrl`, `accessType`, `cost`, `registrationRequired`, `limitations`, `verifiedAt`, `latitude`, and `longitude`. Access types are `broadcast`, `telescope-images`, `telescope-replay`, `image-request`, `course-access`, `webcam`, and `observation-info`.
 
-Ground coordinates can be null; space telescope resources must not receive fabricated Earth markers. The map takes markers shaped as `{ id, type, name, latitude, longitude, href }`. Joaquin supplies launch coordinates through the launch feed. Provider links use verified HTTPS URLs, and new-tab links include `rel="noreferrer"`. Seed records must come from checked official sources. The directory and map remain pending.
+Ground coordinates can be null; space telescope resources must not receive fabricated Earth markers. The map takes markers shaped as `{ id, type, name, latitude, longitude, href }`. Joaquin supplies launch coordinates through the launch feed. Provider links use verified HTTPS URLs, and new-tab links include `rel="noreferrer"`. Seed records must come from checked official sources. The directory and map use the same telescope catalog.
+
+The public `GET /api/telescopes/solar` endpoint returns `{ capturedAt, imageUrl, source }` for Cerro Tololo’s most recent telescope exposure, with the actual capture time in UTC. The source is either `cerro-tololo` or `gong-network` (the Helioviewer fallback). It returns 503 if both sources are unavailable.
 
 ## Response conventions
 

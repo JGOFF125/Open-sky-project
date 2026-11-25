@@ -11,7 +11,9 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
-    "test:smoke": "node tests/smoke.mjs"
+    "test:smoke": "node tests/smoke.mjs",
+    "test:integration": "vitest run --config vitest.integration.config.mjs",
+    "test:emulators": "npx --yes firebase-tools@15.37.0 emulators:exec --config firebase.emulators.json --project demo-opensky --only auth,firestore \"npm run test:integration\""
   },
   "dependencies": {
     "next": "16.4.6",
@@ -19,6 +21,7 @@
     "react-dom": "19.3.1",
     "firebase": "13.2.0",
     "firebase-admin": "14.5.0",
+    "leaflet": "1.9.4",
     "lucide-react": "^0.468.0",
     "server-only": "0.0.1"
   },
