@@ -32,7 +32,7 @@ I'm reserving `/explore`, `GET /api/telescopes`, and the map for telescope disco
 
 Ground coordinates can be null; space telescope resources must not receive fabricated Earth markers. The map takes markers shaped as `{ id, type, name, latitude, longitude, href }`. Joaquin supplies launch coordinates through the launch feed. Provider links use verified HTTPS URLs, and new-tab links include `rel="noreferrer"`. Seed records must come from checked official sources. The directory and map use the same telescope catalog.
 
-The public `GET /api/telescopes/solar` endpoint returns `{ capturedAt, imageUrl }` for Cerro Tololo’s most recent telescope exposure, with the actual capture time in UTC. It returns 503 if the public provider feed is unavailable or invalid.
+The public `GET /api/telescopes/solar` endpoint returns `{ capturedAt, imageUrl, source }` for Cerro Tololo’s most recent telescope exposure, with the actual capture time in UTC. The source is either `cerro-tololo` or `gong-network` (the Helioviewer fallback). It returns 503 if both sources are unavailable.
 
 ## Response conventions
 

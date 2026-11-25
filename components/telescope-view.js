@@ -79,11 +79,18 @@ function SolarImage() {
       </p>
     );
   }
-  const { capturedAt, imageUrl, recent } = observation;
+  const { capturedAt, imageUrl, recent, source } = observation;
+  const fromChile = source === "cerro-tololo";
   return (
     <figure>
-      <SolarFrame key={imageUrl} imageUrl={imageUrl} />
+      <SolarFrame key={imageUrl} imageUrl={imageUrl} fromChile={fromChile} />
       <figcaption>
+        {!fromChile && (
+          <p>
+            Cerro Tololo’s feed is unavailable. Showing an image from the GONG
+            telescope network via Helioviewer.
+          </p>
+        )}
         <p>
           {recent && !unavailable ? "Near-live image" : "Last available image"}{" "}
           · Captured{" "}
@@ -109,7 +116,7 @@ function SolarImage() {
   );
 }
 
-function SolarFrame({ imageUrl }) {
+function SolarFrame({ imageUrl, fromChile }) {
   const [failed, setFailed] = useState(false);
   return failed ? (
     <p role="status">
@@ -118,7 +125,11 @@ function SolarFrame({ imageUrl }) {
   ) : (
     <Image
       src={imageUrl}
-      alt="Full-disk hydrogen-alpha telescope image of the Sun from Cerro Tololo"
+      alt={
+        fromChile
+          ? "Full-disk hydrogen-alpha telescope image of the Sun from Cerro Tololo"
+          : "Full-disk hydrogen-alpha telescope image of the Sun from the GONG network"
+      }
       width={512}
       height={512}
       unoptimized

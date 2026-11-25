@@ -83,7 +83,7 @@ node --env-file=.env.local scripts/seed-telescopes.mjs open-sky-e15ed
 
 The seed replaces the seven matching records by ID. The explorer reads the Firestore collection when all seven are valid and falls back to the checked file if the database is unavailable or incomplete. The API reports the active source. The map uses approximate ground coordinates where labelled and links remote viewing to the respective providers.
 
-The explorer includes two new sources in Chile and Mexico. Cerro Tololo’s GONG solar viewer uses the public latest-image feed via `GET /api/telescopes/solar`. It shows the capture time in UTC and refreshes once a minute while open in a visible tab. The image can be older after dark. The UNAM Morelia viewer plays the March 2025 lunar eclipse replay and links directly to the official YouTube video.
+The explorer includes two new sources in Chile and Mexico. Cerro Tololo’s GONG solar viewer uses the public latest-image feed via `GET /api/telescopes/solar`. It shows the capture time in UTC and refreshes once a minute while open in a visible tab. The image can be older after dark. If the Chile feed is unavailable, the viewer shows a separately labelled GONG network image from Helioviewer. The UNAM Morelia viewer plays the March 2025 lunar eclipse replay and links directly to the official YouTube video.
 
 ## Deployment
 

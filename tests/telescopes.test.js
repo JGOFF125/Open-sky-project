@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import sources from "../data/telescopes.json";
-import { parseSolarImage } from "../lib/telescopes/solar-image";
+import {
+  parseNetworkImage,
+  parseSolarImage,
+} from "../lib/telescopes/solar-image";
 describe("Telescope source records", () => {
   it("contains seven unique free resources with verification and access requirements", () => {
     expect(sources).toHaveLength(7);
@@ -40,6 +43,7 @@ describe("Cerro Tololo latest-image feed", () => {
   it("uses the telescope exposure time and the official image host", () => {
     expect(parseSolarImage(feed + "\n")).toEqual({
       capturedAt: "2026-11-24T22:30:42.000Z",
+      source: "cerro-tololo",
       imageUrl:
         "https://gong2.nso.edu/ftp/HA/hav/202611/20261124/20261124223042Ch.jpg",
     });
@@ -54,5 +58,26 @@ describe("Cerro Tololo latest-image feed", () => {
     ]) {
       expect(parseSolarImage(invalid)).toBeNull();
     }
+  });
+});
+
+describe("GONG telescope network fallback", () => {
+  it("labels a Helioviewer frame with its real capture time and network source", () => {
+    const frame = parseNetworkImage({
+      id: "194263735",
+      date: "2026-11-25 05:59:02",
+    });
+    expect(frame).toEqual({
+      capturedAt: "2026-11-25T05:59:02.000Z",
+      imageUrl:
+        "https://api.helioviewer.org/v2/downloadImage/?id=194263735&width=512&type=jpg",
+      source: "gong-network",
+    });
+    expect(
+      parseNetworkImage({ id: "12&format=jpg", date: "2026-11-25 05:59:02" }),
+    ).toBeNull();
+    expect(
+      parseNetworkImage({ id: 12, date: "2026-02-30 00:10:00" }),
+    ).toBeNull();
   });
 });
