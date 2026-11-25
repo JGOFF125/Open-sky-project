@@ -3,6 +3,7 @@ import { FieldValue, Timestamp } from "firebase-admin/firestore";
 import { ApiError, apiError, requireUser } from "@/lib/auth";
 import { adminDb } from "@/lib/firebase/admin";
 import { validateJournalEntry } from "@/lib/journal/model";
+import { readObject } from "@/lib/private-api";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -30,13 +31,7 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const user = await requireUser(request);
-    let body;
-    try {
-      body = await request.json();
-    } catch {
-      throw new ApiError(400, "Enter a valid journal entry.");
-    }
-
+    const body = await readObject(request);
     const entry = validateJournalEntry(body);
     if (!entry) throw new ApiError(400, "Check the journal entry fields.");
 

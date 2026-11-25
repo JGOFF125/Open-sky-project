@@ -12,7 +12,10 @@ export const dynamic = "force-dynamic";
 export async function GET(request) {
   try {
     const collection = await ownedCollection(request, "saved");
-    const snapshot = await collection.orderBy("createdAt", "desc").get();
+    const snapshot = await collection
+      .orderBy("createdAt", "desc")
+      .limit(100)
+      .get();
     return privateResponse({ items: snapshot.docs.map(serializeSaved) });
   } catch (error) {
     return apiError(error);

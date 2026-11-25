@@ -9,3 +9,11 @@ coverage/
 test-results/
 serviceAccount*.json
 *firebase-adminsdk*.json
+service-account*.json
+credentials*.json
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials/
