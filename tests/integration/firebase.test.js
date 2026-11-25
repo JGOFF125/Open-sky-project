@@ -191,6 +191,32 @@ describe.skipIf(!local)("Firebase local emulator integration", () => {
     });
     expect((await POST(broken)).status).toBe(400);
   });
+  it("rejects oversized and non-JSON writes across journal and saved endpoints", async () => {
+    const context = { params: Promise.resolve({ id: "unused" }) };
+    for (const handler of [
+      POST,
+      saved.POST,
+      journalItem.PATCH,
+      savedItem.PATCH,
+    ]) {
+      for (const [body, type, status] of [
+        ["{}", "text/plain", 415],
+        [JSON.stringify({ notes: "x".repeat(33000) }), "application/json", 413],
+      ]) {
+        const input = new Request("http://localhost/api/resource", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${first.idToken}`,
+            "Content-Type": type,
+          },
+          body,
+        });
+        const response = await handler(input, context);
+        expect(response.status).toBe(status);
+        expect(response.headers.get("cache-control")).toBe("no-store");
+      }
+    }
+  });
   it("reads all seven seeded records from Firestore and falls back if a record is incomplete", async () => {
     expect((await (await getTelescopes()).json()).source).toBe("bundled");
     const { stdout } = await promisify(execFile)(process.execPath, [
@@ -386,6 +412,26 @@ describe.skipIf(!local)("Firebase local emulator integration", () => {
         })
       ).status,
     ).toBe(403);
+    const ownUrl = `http://127.0.0.1:8080/v1/projects/demo-opensky/databases/(default)/documents/users/${first.localId}/journal/test`;
+    for (const method of ["GET", "PATCH"]) {
+      expect(
+        (
+          await fetch(ownUrl, {
+            method,
+            headers: {
+              Authorization: `Bearer ${first.idToken}`,
+              "Content-Type": "application/json",
+            },
+            body:
+              method === "PATCH"
+                ? JSON.stringify({
+                    fields: { title: { stringValue: "Blocked" } },
+                  })
+                : undefined,
+          })
+        ).status,
+      ).toBe(403);
+    }
   });
   it("refreshes through one shared transaction claim and then serves cached detailed launch data", async () => {
     process.env.OPENSKY_DATA_MODE = "live";

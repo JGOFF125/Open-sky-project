@@ -15,6 +15,7 @@ Open http://localhost:3000. The default preview works without a Firebase project
 
 ```bash
 npm run lint
+npm run security:secrets
 npm test
 npm run build
 npm run test:smoke
@@ -35,7 +36,7 @@ npm run dev
 
 If a personal branch already exists, switch to it and merge `origin/main` instead of creating it again. Keep existing work committed before switching branches. Our feature ownership and response formats are in [docs/interfaces.md](docs/interfaces.md).
 
-The launch API works with labelled sample data without credentials, so everyone can start their pages now. Copy `.env.example` to `.env.local` for the shared browser authentication settings. The `NEXT_PUBLIC_FIREBASE_*` values identify the web app and are public configuration, not server credentials.
+The launch API works with labelled sample data without credentials, so everyone can start their pages now. Copy `.env.example` to `.env.local` and fill in the browser API key from the OpenSky web app settings. The `NEXT_PUBLIC_FIREBASE_*` values identify the web app and reach the browser by design. Keep real keys out of the example file and restrict the web key to the Firebase APIs this app uses.
 
 Protected API routes and real database writes need server credentials supplied privately by the project owner. Keep private keys in `.env.local` or Vercel environment variables. Browser database access stays denied; feature pages call our Next.js API routes.
 
@@ -111,3 +112,5 @@ I'm tracking our agreed interfaces in [docs/interfaces.md](docs/interfaces.md) a
 - [Firebase token verification](https://firebase.google.com/docs/auth/admin/verify-id-tokens)
 
 I'm using original CSS illustrations in the current interface. They are decorative and do not depict actual mission photography or live orbital positions.
+
+Credential handling and the latest security assessment are in [SECURITY.md](SECURITY.md).

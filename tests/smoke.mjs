@@ -43,6 +43,17 @@ async function check(mode, port) {
     });
     const root = `http://127.0.0.1:${port}`;
     const response = await fetch(`${root}/api/launches`);
+    assert.equal(response.headers.get("x-content-type-options"), "nosniff");
+    assert.equal(response.headers.get("x-frame-options"), "DENY");
+    assert.ok(
+      response.headers
+        .get("content-security-policy")
+        .includes("frame-ancestors 'none'"),
+    );
+    assert.equal(
+      response.headers.get("referrer-policy"),
+      "strict-origin-when-cross-origin",
+    );
     const feed = await response.json();
     if (mode === "live") {
       assert.equal(response.status, 503);
