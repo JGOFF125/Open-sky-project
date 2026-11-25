@@ -24,7 +24,6 @@ export function ObservingMap({ locations, launchLabel }) {
         if (!active || !element) return;
         const map = L.map(element, {
           scrollWheelZoom: false,
-          minZoom: 2,
         }).setView([24, -25], 2);
         controller.current = { map, L, pins: L.layerGroup().addTo(map) };
         L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
