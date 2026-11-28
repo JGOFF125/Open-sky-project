@@ -11,12 +11,13 @@ import { getLaunchFeed } from "@/lib/launches/service";
 import { featuredLaunch } from "@/lib/launches/model";
 import { Countdown } from "@/components/countdown";
 import { LaunchCard } from "@/components/launch-card";
+import { getTelescopeCatalog } from "@/lib/telescopes/catalog";
 import { EarthScene } from "@/components/earth-scene";
 import { FeedNotice } from "@/components/feed-notice";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const feed = await getLaunchFeed();
+  const [feed, { telescopes }] = await Promise.all([getLaunchFeed(), getTelescopeCatalog()]);
   const featured = featuredLaunch(feed.launches);
   return (
     <>
@@ -49,7 +50,7 @@ export default async function Home() {
             <span className="tiny-orbit" /> One planet. Endless possibilities.
           </div>
         </div>
-        <EarthScene />
+        <EarthScene telescopes={telescopes} launches={feed.launches} demo={feed.mode === "demo"} />
       </section>
       <section className="shell featured-section">
         <FeedNotice feed={feed} />
