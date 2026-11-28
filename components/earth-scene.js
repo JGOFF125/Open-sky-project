@@ -52,54 +52,57 @@ export function EarthScene({ telescopes = [], launches = [], demo = false }) {
     let cleanup = () => {};
     const host = mount.current;
     async function initialize() {
-      const THREE = await import("three");
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 480;
+      canvas.setAttribute("aria-hidden", "true");
+      const context = canvas.getContext("2d");
+      if (!context) { setStatus("fallback"); return; }
+      const image = new Image();
+      image.src = "/images/earth-blue-marble.jpg";
+      try { await image.decode(); } catch { setStatus("fallback"); return; }
       if (disposed) return;
-      let renderer;
-      try {
-        renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      } catch {
-        setStatus("fallback");
-        return;
+      const sourceCanvas = document.createElement("canvas");
+      sourceCanvas.width = image.width;
+      sourceCanvas.height = image.height;
+      const sourceContext = sourceCanvas.getContext("2d", { willReadFrequently: true });
+      sourceContext.drawImage(image, 0, 0);
+      const source = sourceContext.getImageData(0, 0, image.width, image.height).data;
+      const output = context.createImageData(480, 480);
+      const radius = 240 / 1.24;
+      const samples = [];
+      const tiltCos = Math.cos(.12);
+      const tiltSin = Math.sin(.12);
+      // I map the texture back onto the visible half of the sphere
+      for (let y = 0; y < 480; y++) {
+        for (let x = 0; x < 480; x++) {
+          const nx = (x - 239.5) / radius;
+          const ny = (239.5 - y) / radius;
+          const distance = nx * nx + ny * ny;
+          if (distance > 1) continue;
+          const nz = Math.sqrt(1 - distance);
+          const localY = ny * tiltCos + nz * tiltSin;
+          const localZ = -ny * tiltSin + nz * tiltCos;
+          const u = (.5 + Math.atan2(-localZ, nx) / (2 * Math.PI)) * image.width;
+          const row = Math.min(image.height - 1, Math.max(0, Math.floor((.5 - Math.asin(localY) / Math.PI) * image.height)));
+          const light = .28 + .78 * Math.max(0, (-.45 * nx + .45 * ny + nz) / 1.185);
+          samples.push({ output: (y * 480 + x) * 4, row: row * image.width, u, light });
+          output.data[(y * 480 + x) * 4 + 3] = Math.min(255, (1 - distance) * radius * 255);
+        }
       }
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.domElement.setAttribute("aria-hidden", "true");
-      host.prepend(renderer.domElement);
-      const scene = new THREE.Scene();
-      const camera = new THREE.OrthographicCamera(-1.24, 1.24, 1.24, -1.24, .1, 10);
-      camera.position.z = 4;
-      const globe = new THREE.Group();
-      globe.rotation.x = .12;
-      scene.add(globe);
-      const geometry = new THREE.SphereGeometry(1, 80, 48);
-      const material = new THREE.MeshPhongMaterial({ color: 0xffffff, shininess: 7, specular: 0x203345 });
-      globe.add(new THREE.Mesh(geometry, material));
-      scene.add(new THREE.AmbientLight(0xffffff, 1.35));
-      const sunlight = new THREE.DirectionalLight(0xd6eeff, 2.1);
-      sunlight.position.set(-3, 2, 4);
-      scene.add(sunlight);
-      const texture = new THREE.TextureLoader().load("/images/earth-blue-marble.jpg", () => {
-        if (!disposed) setStatus("ready");
-      }, undefined, () => { if (!disposed) setStatus("fallback"); });
-      texture.colorSpace = THREE.SRGBColorSpace;
-      texture.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
-      material.map = texture;
+      host.prepend(canvas);
+      setStatus("ready");
       const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
       let visible = true;
       const observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; });
       observer.observe(host);
-      const resize = new ResizeObserver(() => {
-        renderer.setSize(host.clientWidth, host.clientHeight);
-      });
-      resize.observe(host);
       const points = locations.map((location) => {
         const lat = location.latitude * Math.PI / 180;
         const lon = location.longitude * Math.PI / 180;
-        return new THREE.Vector3(Math.cos(lat) * Math.cos(lon), Math.sin(lat), -Math.cos(lat) * Math.sin(lon));
+        return { x: Math.cos(lat) * Math.cos(lon), y: Math.sin(lat), z: -Math.cos(lat) * Math.sin(lon) };
       });
       let frame;
       let last = 0;
-      const world = new THREE.Vector3();
+      let renderedAngle = null;
       function draw(now) {
         frame = requestAnimationFrame(draw);
         if (now - last < 33) return;
@@ -107,32 +110,39 @@ export function EarthScene({ telescopes = [], launches = [], demo = false }) {
         last = now;
         if (!visible || document.hidden) return;
         if (!motion.current.paused && !motion.current.hover && !reduced.matches) angle.current += delta * .11;
-        globe.rotation.y = angle.current;
-        globe.updateMatrixWorld(true);
-        renderer.render(scene, camera);
+        if (renderedAngle !== angle.current) {
+        const offset = angle.current / (2 * Math.PI) * image.width;
+        for (const pixel of samples) {
+          const column = ((Math.floor(pixel.u - offset) % image.width) + image.width) % image.width;
+          const index = (pixel.row + column) * 4;
+          output.data[pixel.output] = source[index] * pixel.light;
+          output.data[pixel.output + 1] = source[index + 1] * pixel.light;
+          output.data[pixel.output + 2] = source[index + 2] * pixel.light;
+        }
+        context.putImageData(output, 0, 0);
+        renderedAngle = angle.current;
+        }
+        const cos = Math.cos(angle.current);
+        const sin = Math.sin(angle.current);
         points.forEach((point, index) => {
           const button = markers.current.get(locations[index].key);
           if (!button) return;
-          world.copy(point).applyMatrix4(globe.matrixWorld);
-          const front = world.z > .08;
-          button.hidden = !front;
-          if (front) {
-            world.project(camera);
-            button.style.left = `${(world.x + 1) * 50}%`;
-            button.style.top = `${(1 - world.y) * 50}%`;
+          const x = point.x * cos + point.z * sin;
+          const rotatedZ = -point.x * sin + point.z * cos;
+          const y = point.y * tiltCos - rotatedZ * tiltSin;
+          const z = point.y * tiltSin + rotatedZ * tiltCos;
+          button.hidden = z <= .08;
+          if (z > .08) {
+            button.style.left = `${50 + x / 1.24 * 50}%`;
+            button.style.top = `${50 - y / 1.24 * 50}%`;
           }
         });
       }
-      const onLost = (event) => { event.preventDefault(); setStatus("fallback"); };
-      renderer.domElement.addEventListener("webglcontextlost", onLost);
       frame = requestAnimationFrame(draw);
       cleanup = () => {
         cancelAnimationFrame(frame);
         observer.disconnect();
-        resize.disconnect();
-        renderer.domElement.removeEventListener("webglcontextlost", onLost);
-        geometry.dispose(); material.dispose(); texture.dispose(); renderer.dispose();
-        renderer.domElement.remove();
+        canvas.remove();
       };
     }
     initialize().catch(() => { if (!disposed) setStatus("fallback"); });
@@ -147,7 +157,7 @@ export function EarthScene({ telescopes = [], launches = [], demo = false }) {
         onPointerLeave={() => { motion.current.hover = false; }}>
         <div className="globe-halo" aria-hidden="true" />
         {status !== "ready" && <p className="globe-status" role="status">
-          {status === "loading" ? "Loading Earth…" : "3D view unavailable. Explore the locations below."}
+          {status === "loading" ? "Loading Earth…" : "Globe rendering unavailable. Explore the locations below."}
         </p>}
         {status === "ready" && locations.map((location) => (
           <button key={location.key} type="button" className={`globe-pin pin-${location.type}`}
