@@ -2190,7 +2190,7 @@ h1 em {
 @keyframes earth-cloud-drift { to { transform: rotate(360deg); } }
 @keyframes earth-grid-drift { to { transform: translateX(18px) scaleX(.85); } }
 .earth-motion {
-  position: absolute; right: 70px; bottom: 35px; pointer-events: auto;
+  position: absolute; left: 42px; bottom: 35px; pointer-events: auto;
   display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px;
   border: 1px solid #90c6df33; border-radius: 20px; color: #b9c9da;
   background: #071320cc; font: inherit; font-size: 12px; cursor: pointer;
