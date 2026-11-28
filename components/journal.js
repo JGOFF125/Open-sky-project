@@ -41,6 +41,7 @@ export function Journal() {
 function JournalCollection({ user }) {
   const [entries, setEntries] = useState(null);
   const [resources, setResources] = useState([]);
+  const [resourceError, setResourceError] = useState("");
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [attempt, setAttempt] = useState(0);
@@ -61,9 +62,17 @@ function JournalCollection({ user }) {
     );
     accountRequest(user, "/api/saved", { signal: controller.signal }).then(
       ({ items }) => {
-        if (!controller.signal.aborted) setResources(items);
+        if (!controller.signal.aborted) {
+          setResources(items);
+          setResourceError("");
+        }
       },
-      () => {},
+      () => {
+        if (!controller.signal.aborted)
+          setResourceError(
+            "Your saved resources could not load. You can still write an observation.",
+          );
+      },
     );
     return () => controller.abort();
   }, [user, attempt]);
@@ -131,6 +140,21 @@ function JournalCollection({ user }) {
 
   return (
     <div className="journal-layout">
+      {resourceError && (
+        <div className="feed-notice warning" role="status">
+          <span>{resourceError}</span>
+          <button
+            className="feed-retry"
+            type="button"
+            onClick={() => {
+              setResourceError("");
+              setAttempt((value) => value + 1);
+            }}
+          >
+            Try again
+          </button>
+        </div>
+      )}
       <JournalForm
         key={editing?.id ?? "new"}
         user={user}

@@ -1,4 +1,17 @@
+"use client";
+
+import { useTransition } from "react";
+import { useRouter } from "next/navigation";
+
 export function FeedNotice({ feed }) {
+  const router = useRouter();
+  const [pending, startTransition] = useTransition();
+  const retry = (
+    <button type="button" className="feed-retry" disabled={pending}
+      onClick={() => startTransition(() => router.refresh())}>
+      {pending ? "Checking…" : "Check again"}
+    </button>
+  );
   if (feed.mode === "demo")
     return (
       <div className="feed-notice">
@@ -12,7 +25,8 @@ export function FeedNotice({ feed }) {
   if (feed.unavailable)
     return (
       <div className="feed-notice warning" role="status">
-        Launch data is temporarily unavailable. Please try again shortly.
+        <span>Launch data is temporarily unavailable. Please try again shortly.</span>
+        {retry}
       </div>
     );
   return (
@@ -27,6 +41,7 @@ export function FeedNotice({ feed }) {
           : "Awaiting update"}
         . Launch times may change.
       </span>
+      {feed.stale && retry}
     </div>
   );
 }

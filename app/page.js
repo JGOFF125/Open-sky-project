@@ -11,6 +11,7 @@ import { getLaunchFeed } from "@/lib/launches/service";
 import { featuredLaunch } from "@/lib/launches/model";
 import { Countdown } from "@/components/countdown";
 import { LaunchCard } from "@/components/launch-card";
+import { EarthScene } from "@/components/earth-scene";
 import { FeedNotice } from "@/components/feed-notice";
 export const dynamic = "force-dynamic";
 
@@ -48,29 +49,7 @@ export default async function Home() {
             <span className="tiny-orbit" /> One planet. Endless possibilities.
           </div>
         </div>
-        <div
-          className="earth-scene"
-          role="img"
-          aria-label="Illustration of Earth at night with orbital paths"
-        >
-          <div className="orbit orbit-one" />
-          <div className="orbit orbit-two" />
-          <div className="earth">
-            <div className="earth-grid" />
-            <div className="earth-land land-one" />
-            <div className="earth-land land-two" />
-            <div className="earth-cloud" />
-          </div>
-          <span className="satellite-point" />
-          <div className="coordinate coord-top">
-            EARTH / OUR STARTING POINT
-            <br />
-            <span>28.56° N &nbsp; 80.58° W</span>
-          </div>
-          <div className="coordinate coord-bottom">
-            A WORLD OF DISCOVERY <span>↗</span>
-          </div>
-        </div>
+        <EarthScene />
       </section>
       <section className="shell featured-section">
         <FeedNotice feed={feed} />
