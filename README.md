@@ -52,7 +52,7 @@ Protected API routes and real database writes need server credentials supplied p
 - Private saved launches and telescope resources with editable notes
 - Private observing journal with create, edit, delete, and optional links to saved resources
 
-I'm tracking this review in [docs/checkpoint-status.md](docs/checkpoint-status.md). Dialyn's registration/login/logout and Matthew's journal creation/listing are integrated on `joaquin`. Seven checked telescope source records are in `data/telescopes.json`.
+The latest assessment, production blockers, and demo walkthrough are in [docs/readiness-2026-11-28.md](docs/readiness-2026-11-28.md). Historical checkpoints are in [docs/checkpoint-status.md](docs/checkpoint-status.md). Dialyn's registration/login/logout and Matthew's journal creation/listing are integrated on `joaquin`. Seven checked telescope source records are in `data/telescopes.json`.
 
 The November 24 launch code includes local-time display, confirmed-status countdowns, detailed-mode broadcast fields, and Firestore cache checks. Production live data still needs verified private Admin credentials.
 

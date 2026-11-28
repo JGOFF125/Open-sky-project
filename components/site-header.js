@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowUpRight, LogOut, Orbit } from "lucide-react";
@@ -9,9 +10,19 @@ export function SiteHeader() {
   const router = useRouter();
   const { user, loading, logout } = useAuth();
 
+  const [error, setError] = useState("");
+  const [signingOut, setSigningOut] = useState(false);
   async function handleLogout() {
-    await logout();
-    router.push("/");
+    setError("");
+    setSigningOut(true);
+    try {
+      await logout();
+      router.push("/");
+    } catch {
+      setError("Sign out failed. Please try again.");
+    } finally {
+      setSigningOut(false);
+    }
   }
   return (
     <header className="site-header shell">
@@ -27,10 +38,16 @@ export function SiteHeader() {
           ["/", "Discover"],
           ["/launches", "Launches"],
           ["/explore", "Observatories"],
+          ["/journal", "Journal"],
         ].map(([href, label]) => (
           <Link
             href={href}
             key={href}
+            aria-current={
+              (href === "/" ? pathname === "/" : pathname.startsWith(href))
+                ? "page"
+                : undefined
+            }
             className={
               (href === "/" ? pathname === "/" : pathname.startsWith(href))
                 ? "active"
@@ -52,6 +69,7 @@ export function SiteHeader() {
               type="button"
               className="header-logout"
               onClick={handleLogout}
+              disabled={signingOut}
               aria-label="Sign out"
               title={`Signed in as ${user.email}`}
             >
@@ -62,6 +80,9 @@ export function SiteHeader() {
           <Link href="/login" className="header-personal">
             Sign in <ArrowUpRight size={15} />
           </Link>
+        )}
+        {error && (
+          <p className="header-error" role="alert">{error}</p>
         )}
       </div>
     </header>

@@ -1,3 +1,5 @@
+> Historical checkpoint. See [November 28 readiness](readiness-2026-11-28.md) for the current integrated state and remaining deployment steps.
+
 # November 24 checkpoint
 
 I'm keeping the November 20 catch-up work separate from the later team milestones. These changes are collected on `joaquin`; `main` and the original teammate branches stay unchanged.

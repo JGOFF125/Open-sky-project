@@ -2182,3 +2182,23 @@ h1 em {
 .space-mission-links .feature-link {
   margin-top: 3px;
 }
+
+/* I keep the motion optional */
+.earth-cloud { animation: earth-cloud-drift 100s linear infinite; }
+.earth-grid { animation: earth-grid-drift 70s ease-in-out infinite alternate; }
+.earth-paused * { animation-play-state: paused !important; }
+@keyframes earth-cloud-drift { to { transform: rotate(360deg); } }
+@keyframes earth-grid-drift { to { transform: translateX(18px) scaleX(.85); } }
+.earth-motion {
+  position: absolute; left: 42px; bottom: 35px; pointer-events: auto;
+  display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px;
+  border: 1px solid #90c6df33; border-radius: 20px; color: #b9c9da;
+  background: #071320cc; font: inherit; font-size: 12px; cursor: pointer;
+}
+.feed-retry { margin-left: auto; flex-shrink: 0; padding: 7px 10px; border: 1px solid currentColor; border-radius: 7px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.feed-retry:disabled { opacity: .6; cursor: wait; }
+.header-account { position: relative; }
+.header-error { position: absolute; top: 100%; right: 0; width: 220px; z-index: 20; padding: 12px; background: #251725; color: #ffb8b8; border-radius: 8px; }
+.journal-layout > .feed-notice { grid-column: 1 / -1; }
+textarea:focus-visible, summary:focus-visible, .earth-motion:focus-visible, .feed-retry:focus-visible { outline: 2px solid #7ee5d3; outline-offset: 4px; }
+@media (prefers-reduced-motion: reduce) { .earth-motion { display: none; } }
