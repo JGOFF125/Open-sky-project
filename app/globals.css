@@ -2202,3 +2202,51 @@ h1 em {
 .journal-layout > .feed-notice { grid-column: 1 / -1; }
 textarea:focus-visible, summary:focus-visible, .earth-motion:focus-visible, .feed-retry:focus-visible { outline: 2px solid #7ee5d3; outline-offset: 4px; }
 @media (prefers-reduced-motion: reduce) { .earth-motion { display: none; } }
+
+.globe-scene { top: 22px; right: -25px; width: 610px; height: 630px; overflow: visible; pointer-events: auto; }
+.globe-heading { margin: 8px 0 0; text-align: center; font: 9px monospace; letter-spacing: 2px; color: #a0b9cc; }
+.globe-heading .signal-dot { display: inline-block; margin-right: 8px; }
+.globe-viewport { width: 100%; aspect-ratio: 1; position: relative; isolation: isolate; }
+.globe-viewport canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.globe-halo { position: absolute; inset: 9.6%; z-index: -1; border-radius: 50%; box-shadow: 0 0 25px #5ab5da55, 0 0 90px #2886af22; border: 1px solid #74d7ec66; }
+.globe-status { position: absolute; inset: 45% 12% auto; text-align: center; color: #a9c1d1; font-size: 12px; }
+.globe-fallback canvas, .globe-fallback .globe-halo { display: none; }
+.globe-fallback { background: url('/images/earth-blue-marble.jpg') center / contain no-repeat; aspect-ratio: 1; }
+.globe-fallback .globe-status { top: auto; bottom: 10%; background: #07101ce6; padding: 10px; }
+.globe-pin { position: absolute; z-index: 2; width: 26px; height: 26px; padding: 0; border: 0; transform: translate(-50%, -50%); background: transparent; cursor: pointer; }
+.globe-pin::before { content: ''; display: block; width: 7px; height: 7px; margin: auto; border-radius: 50%; background: #93ffdf; box-shadow: 0 0 0 4px #5bdeb52b, 0 0 13px #7df2db; border: 1px solid #e9fff8; }
+.globe-pin.pin-launch::before { background: #ffb86b; border-radius: 2px; transform: rotate(45deg); box-shadow: 0 0 0 4px #ffb86b22, 0 0 13px #ffb86b; }
+.globe-pin[hidden] { display: none; }
+.globe-pin:hover::before, .globe-pin:focus-visible::before { width: 11px; height: 11px; }
+.globe-toolbar { margin: -45px auto 0; position: relative; display: flex; align-items: center; justify-content: center; gap: 7px; }
+.globe-toolbar button { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border: 1px solid #8cc6d82e; border-radius: 30px; background: #0a1525; color: #c2d7e3; cursor: pointer; font: inherit; font-size: 11px; }
+.globe-toolbar button:disabled { opacity: .5; cursor: default; }
+.globe-legend { display: flex; justify-content: center; gap: 22px; margin: 16px 0 11px; font-size: 10px; color: #a8b9c8; }
+.globe-legend span { display: flex; align-items: center; gap: 7px; }
+.globe-legend i { display: inline-block; width: 6px; height: 6px; background: #93ffdf; border-radius: 50%; }
+.globe-legend .legend-launch { background: #ffb86b; border-radius: 1px; transform: rotate(45deg); }
+.globe-credit { font-size: 8px !important; text-align: center; color: #71889c; margin: 10px 0; }
+.globe-detail { position: absolute; top: 60px; left: 35px; right: 35px; z-index: 4; background: #0a1729f5; border: 1px solid #80c7d85c; border-radius: 12px; padding: 22px; box-shadow: 0 12px 60px #0008; max-height: 280px; overflow-y: auto; }
+.globe-close { float: right; background: transparent; border: 0; color: #b9d0df; cursor: pointer; padding: 3px; }
+.globe-detail h3 { margin: 12px 20px 6px 0; font-size: 18px; }
+.globe-detail p { font-size: 11px; color: #9bb3c8; margin: 6px 0 12px; }
+.globe-detail a { display: block; padding: 9px 0; color: var(--cyan); font-size: 12px; border-top: 1px solid #ffffff12; }
+.globe-locations { text-align: center; font-size: 10px; color: #a9c2d3; position: relative; z-index: 3; margin: 8px 45px; }
+.globe-locations summary { cursor: pointer; padding: 5px; }
+.globe-locations > div { position: absolute; left: 0; right: 0; max-height: 220px; overflow-y: auto; background: #0a1729; border: 1px solid #80c7d844; border-radius: 10px; padding: 12px; }
+.globe-locations button { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; width: 100%; border: 0; border-bottom: 1px solid #ffffff12; background: transparent; color: #d0e0ed; padding: 10px; cursor: pointer; font: inherit; }
+.globe-locations button span { color: #80a5b8; font-size: 9px; }
+@media (min-width: 1450px) { .globe-scene { right: 0; top: 30px; } }
+@media (min-width: 761px) and (max-width: 1100px) { .globe-scene { right: -35px; transform: scale(.82); transform-origin: right center; } }
+@media (max-width: 760px) {
+  .hero { min-height: 1040px; }
+  .globe-scene { top: 465px; right: 50%; width: min(100%, 440px); height: auto; max-width: none; transform: translateX(50%); }
+  .globe-heading { font-size: 7px; letter-spacing: 1.2px; }
+  .globe-toolbar { margin-top: -16px; }
+  .globe-legend { gap: 14px; font-size: 9px; }
+  .globe-credit { padding: 0 12px; line-height: 1.7; }
+  .globe-detail { left: 5px; right: 5px; top: 40px; }
+  .globe-locations { margin-left: 10px; margin-right: 10px; }
+}
+
+@media (min-width: 761px) { .hero { min-height: 760px; } }
